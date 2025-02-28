@@ -17,7 +17,9 @@ public class Player extends Entity{
     private int playerDir = -1;
     private boolean isMoving = false;
     public int spriteIndex = 0;
-    public int spriteCounter = 1000;
+    public int spriteCounter = 20;
+    final int characterWidth = 64;
+    final int characterHeight = 64;
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
@@ -79,7 +81,7 @@ public class Player extends Entity{
             if(isMoving){
                 spriteCounter++;
 
-                if(spriteCounter > 1000) {
+                if(spriteCounter > 20) {
                     spriteIndex++;
                     spriteCounter = 0;
                 }
@@ -87,15 +89,15 @@ public class Player extends Entity{
                 if(spriteIndex >= image.length){
                     spriteIndex = 0;
                 }
-                g2.drawImage(image[spriteIndex],xPos,yPos,gamePanel.getTileSize(),gamePanel.getTileSize(),null);
+                g2.drawImage(image[spriteIndex],xPos,yPos,characterWidth,characterHeight,null);
             }else{
-                g2.drawImage(image[0],xPos,yPos,gamePanel.getTileSize(),gamePanel.getTileSize(),null);
+                g2.drawImage(image[0],xPos,yPos,characterWidth,characterHeight,null);
             }
         }else if(image.length == 8) {
             if(isMoving) {
                 spriteCounter++;
 
-                if(spriteCounter > 1000) {
+                if(spriteCounter > 20) {
                     spriteIndex++;
                     spriteCounter = 0;
                 }
@@ -103,9 +105,9 @@ public class Player extends Entity{
                 if(spriteIndex >= image.length){
                     spriteIndex = 0;
                 }
-                g2.drawImage(image[spriteIndex],xPos,yPos,gamePanel.getTileSize(),gamePanel.getTileSize(),null);
+                g2.drawImage(image[spriteIndex],xPos,yPos,characterWidth,characterHeight,null);
             }else {
-                g2.drawImage(image[0],xPos,yPos,gamePanel.getTileSize(),gamePanel.getTileSize(),null);
+                g2.drawImage(image[0],xPos,yPos,characterWidth,characterHeight,null);
             }
         }
     }

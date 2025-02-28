@@ -2,6 +2,7 @@ package Main;
 
 import Entity.Player;
 import PlayerKeyHandler.KeyHandler;
+import Tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,18 +10,17 @@ import java.awt.*;
 import static Utilz.Constants.Directions.*;
 
 public class GamePanel extends JPanel {
-    final int originalTileSize = 32; // 32 x 32 tile
-    final int scale = 2;
+    final int originalTileSize = 16; // 32 x 32 tile
+    final int scale = 1;
     final int tileSize = originalTileSize * scale; // 64 x 64 tile that would be displayed
-    final int maxScreenCol = 20;
-    final int maxScreenRow = 12;
+    final int maxScreenCol = 80;
+    final int maxScreenRow = 48;
     final int screenWidth = tileSize * maxScreenCol; // 1280
     final int screenHeight = tileSize * maxScreenRow; // 768
 
-
-    // Set Player's default position
     KeyHandler keyHandler = new KeyHandler(this);
     Player player = new Player(this,keyHandler);
+    TileManager tileManager = new TileManager(this);
 
 
     public GamePanel() {
@@ -47,6 +47,8 @@ public class GamePanel extends JPanel {
 
         Graphics2D g2 = (Graphics2D)g;
 
+        tileManager.draw(g2);
+
         player.draw(g2);
 
         g2.dispose();
@@ -58,5 +60,13 @@ public class GamePanel extends JPanel {
 
     public int getTileSize() {
         return tileSize;
+    }
+
+    public int getMaxScreenCol() {
+        return maxScreenCol;
+    }
+
+    public int getMaxScreenRow() {
+        return maxScreenRow;
     }
 }
