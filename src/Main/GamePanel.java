@@ -1,5 +1,6 @@
 package Main;
 
+import Entity.Player;
 import PlayerKeyHandler.KeyHandler;
 
 import javax.swing.*;
@@ -15,13 +16,11 @@ public class GamePanel extends JPanel {
     final int maxScreenRow = 12;
     final int screenWidth = tileSize * maxScreenCol; // 1280
     final int screenHeight = tileSize * maxScreenRow; // 768
-    private int playerDir = -1;
-    private boolean isMoving = false;
+
 
     // Set Player's default position
-    int playerX = 640;
-    int playerY = 384;
-    int playerSpeed = 4;
+    KeyHandler keyHandler = new KeyHandler(this);
+    Player player = new Player(this,keyHandler);
 
 
     public GamePanel() {
@@ -29,16 +28,16 @@ public class GamePanel extends JPanel {
         setBackground(Color.black);
         setDoubleBuffered(true);
         setFocusable(true);
-        addKeyListener(new KeyHandler(this));
+        addKeyListener(keyHandler);
         requestFocusInWindow();
     }
 
     public void setDir(int playerDir) {
-        this.playerDir = playerDir;
+        player.setPlayerDir(playerDir);
     }
 
     public void isMoving(boolean isMoving){
-        this.isMoving = isMoving;
+        player.isMoving(isMoving);
     }
 
 
@@ -48,21 +47,16 @@ public class GamePanel extends JPanel {
 
         Graphics2D g2 = (Graphics2D)g;
 
-        g2.setColor(Color.white);
-
-        g2.fillRect(playerX,playerY,tileSize,tileSize);
+        player.draw(g2);
 
         g2.dispose();
     }
 
     public void updatePos() {
-        if(isMoving) {
-            switch (playerDir) {
-                case UP -> playerY -= playerSpeed;
-                case LEFT -> playerX -= playerSpeed;
-                case DOWN -> playerY += playerSpeed;
-                case RIGHT -> playerX += playerSpeed;
-            }
-        }
+        player.updatePos();
+    }
+
+    public int getTileSize() {
+        return tileSize;
     }
 }
