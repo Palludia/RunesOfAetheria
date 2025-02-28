@@ -10,17 +10,23 @@ import java.awt.*;
 import static Utilz.Constants.Directions.*;
 
 public class GamePanel extends JPanel {
-    final int originalTileSize = 16; // 32 x 32 tile
+    final int originalTileSize = 16;
     final int scale = 1;
-    final int tileSize = originalTileSize * scale; // 64 x 64 tile that would be displayed
-    final int maxScreenCol = 80;
-    final int maxScreenRow = 48;
-    final int screenWidth = tileSize * maxScreenCol; // 1280
-    final int screenHeight = tileSize * maxScreenRow; // 768
+    final int tileSize = originalTileSize * scale;
+    final int maxScreenCol = 160;
+    final int maxScreenRow = 96;
+    public final int screenWidth = 1280; // 1280
+    public final int screenHeight = 768; // 768
 
     KeyHandler keyHandler = new KeyHandler(this);
-    Player player = new Player(this,keyHandler);
+    public Player player = new Player(this,keyHandler);
     TileManager tileManager = new TileManager(this);
+
+    //WORLD MAP SETTINGS
+    public final int maxWorldCol = 100;
+    public final int maxWorldRow = 100;
+    public final int worldWidth = tileSize * maxWorldCol;
+    public final int worldHeight = tileSize * maxWorldRow;
 
 
     public GamePanel() {
