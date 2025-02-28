@@ -27,8 +27,8 @@ public class TileManager {
         this.gamePanel = gamePanel;
         this.tiles = new HashMap<>();
         this.mapLayers = new ArrayList<>();
-        loadTileSet("/maps/map01(REAL).tmj");
-        loadMap("/maps/map01(REAL).tmj");
+        loadTileSet("/maps/WorldMapProto.tmj");
+        loadMap("/maps/worldMapProto.tmj");
     }
 
     private void loadTileSet(String mapPath) {
@@ -107,19 +107,29 @@ public class TileManager {
     public void draw(Graphics2D g2) {
         // Draw all layers in order
         for(int[][] layerData: mapLayers) {
-            for(int row = 0; row < gamePanel.getMaxScreenRow(); row++) {
-                for(int col = 0; col < gamePanel.getMaxScreenCol(); col++) {
-                    int gid = layerData[col][row];
+            for(int worldRow = 0; worldRow < gamePanel.getMaxScreenRow(); worldRow++) {
+                for(int worldCol = 0; worldCol < gamePanel.getMaxScreenCol(); worldCol++) {
+                    int gid = layerData[worldCol][worldRow];
                     if(gid == 0) continue; // skip empty tiles
 
                     Tile tile = tiles.get(gid);
                     if(tile != null) {
-                        int x = col * gamePanel.getTileSize();
-                        int y = row * gamePanel.getTileSize();
-                        g2.drawImage(tile.image,x,y,gamePanel.getTileSize(),gamePanel.getTileSize(),null);
+                        int worldX = worldCol * gamePanel.getTileSize();
+                        int worldY = worldRow * gamePanel.getTileSize();
+                        int screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;
+                        int screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;
+
+                        if (worldX + gamePanel.getTileSize() > gamePanel.player.worldX - gamePanel.player.screenX &&
+                            worldX  - gamePanel.getTileSize() < gamePanel.player.worldX + gamePanel.player.screenX &&
+                            worldY + gamePanel.getTileSize() > gamePanel.player.worldY - gamePanel.player.screenY &&
+                            worldY - gamePanel.getTileSize() < gamePanel.player.worldY + gamePanel.player.screenY) {
+                            g2.drawImage(tile.image,screenX,screenY,gamePanel.getTileSize(),gamePanel.getTileSize(),null);
+                        }
                     }
                 }
             }
         }
     }
 }
+
+

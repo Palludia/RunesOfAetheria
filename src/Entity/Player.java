@@ -17,13 +17,18 @@ public class Player extends Entity{
     private int playerDir = -1;
     private boolean isMoving = false;
     public int spriteIndex = 0;
-    public int spriteCounter = 20;
+    public int spriteCounter = 60;
     final int characterWidth = 64;
     final int characterHeight = 64;
+    public final int screenX;
+    public final int screenY;
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
+
+        screenX = gamePanel.screenWidth / 2 - (gamePanel.getTileSize()/2);
+        screenY = gamePanel.screenHeight / 2 - (gamePanel.getTileSize()/2);
 
         setDefaultValues();
         getPlayerImage();
@@ -31,8 +36,8 @@ public class Player extends Entity{
     }
 
     public void setDefaultValues() {
-        xPos = 640;
-        yPos = 384;
+        worldX = gamePanel.getTileSize() * 78;
+        worldY = gamePanel.getTileSize() * 42;
         speed = 4;
         direction = "down";
     }
@@ -49,19 +54,19 @@ public class Player extends Entity{
         // Check if any movement keys are held
         if (!keyHandler.keysHeld.isEmpty()) {
             if (keyHandler.keysHeld.contains(KeyEvent.VK_W)) { // Up
-                yPos -= speed;
+                worldY -= speed;
                 direction = "up";
             }
             if (keyHandler.keysHeld.contains(KeyEvent.VK_A)) { // Left
-                xPos -= speed;
+                worldX -= speed;
                 direction = "left";
             }
             if (keyHandler.keysHeld.contains(KeyEvent.VK_S)) { // Down
-                yPos += speed;
+                worldY += speed;
                 direction = "down";
             }
             if (keyHandler.keysHeld.contains(KeyEvent.VK_D)) { // Right
-                xPos += speed;
+                worldX += speed;
                 direction = "right";
             }
         }
@@ -81,7 +86,7 @@ public class Player extends Entity{
             if(isMoving){
                 spriteCounter++;
 
-                if(spriteCounter > 20) {
+                if(spriteCounter > 60) {
                     spriteIndex++;
                     spriteCounter = 0;
                 }
@@ -89,15 +94,15 @@ public class Player extends Entity{
                 if(spriteIndex >= image.length){
                     spriteIndex = 0;
                 }
-                g2.drawImage(image[spriteIndex],xPos,yPos,characterWidth,characterHeight,null);
+                g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
             }else{
-                g2.drawImage(image[0],xPos,yPos,characterWidth,characterHeight,null);
+                g2.drawImage(image[0],screenX,screenY,characterWidth,characterHeight,null);
             }
         }else if(image.length == 8) {
             if(isMoving) {
                 spriteCounter++;
 
-                if(spriteCounter > 20) {
+                if(spriteCounter > 60) {
                     spriteIndex++;
                     spriteCounter = 0;
                 }
@@ -105,19 +110,11 @@ public class Player extends Entity{
                 if(spriteIndex >= image.length){
                     spriteIndex = 0;
                 }
-                g2.drawImage(image[spriteIndex],xPos,yPos,characterWidth,characterHeight,null);
+                g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
             }else {
-                g2.drawImage(image[0],xPos,yPos,characterWidth,characterHeight,null);
+                g2.drawImage(image[0],screenX,screenY,characterWidth,characterHeight,null);
             }
         }
-    }
-
-    public int getXPos() {
-        return xPos;
-    }
-
-    public int getYPos() {
-        return yPos;
     }
 
     public void getPlayerImage() {

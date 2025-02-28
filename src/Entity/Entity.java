@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Entity {
 
-    public int xPos, yPos;
+    public int worldX, worldY;
     public int speed;
 
     public BufferedImage[] walkDown = new BufferedImage[6];
