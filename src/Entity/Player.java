@@ -17,7 +17,7 @@ public class Player extends Entity{
     private int playerDir = -1;
     private boolean isMoving = false;
     public int spriteIndex = 0;
-    public int spriteCounter = 60;
+    public int spriteCounter = 6;
     final int characterWidth = 64;
     final int characterHeight = 64;
     public final int screenX;
@@ -86,7 +86,7 @@ public class Player extends Entity{
             if(isMoving){
                 spriteCounter++;
 
-                if(spriteCounter > 60) {
+                if(spriteCounter > 6) {
                     spriteIndex++;
                     spriteCounter = 0;
                 }
@@ -102,7 +102,7 @@ public class Player extends Entity{
             if(isMoving) {
                 spriteCounter++;
 
-                if(spriteCounter > 60) {
+                if(spriteCounter > 6) {
                     spriteIndex++;
                     spriteCounter = 0;
                 }

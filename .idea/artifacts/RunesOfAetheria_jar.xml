@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="RunesOfAetheria:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/RunesOfAetheria_jar</output-path>
+    <root id="archive" name="RunesOfAetheria.jar">
+      <element id="module-output" name="RunesOfAetheria" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/gson-2.12.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
