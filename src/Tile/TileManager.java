@@ -106,6 +106,11 @@ public class TileManager {
 
     public void draw(Graphics2D g2) {
         // Draw all layers in order
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
+
         for(int[][] layerData: mapLayers) {
             for(int worldRow = 0; worldRow < gamePanel.getMaxScreenRow(); worldRow++) {
                 for(int worldCol = 0; worldCol < gamePanel.getMaxScreenCol(); worldCol++) {
@@ -116,14 +121,15 @@ public class TileManager {
                     if(tile != null) {
                         int worldX = worldCol * gamePanel.getTileSize();
                         int worldY = worldRow * gamePanel.getTileSize();
-                        int screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;
-                        int screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;
+                        int screenX = (int)(worldX - gamePanel.player.worldX + gamePanel.player.screenX);
+                        int screenY = (int)(worldY - gamePanel.player.worldY + gamePanel.player.screenY);
 
-                        if (worldX + gamePanel.getTileSize() > gamePanel.player.worldX - gamePanel.player.screenX &&
-                            worldX  - gamePanel.getTileSize() < gamePanel.player.worldX + gamePanel.player.screenX &&
-                            worldY + gamePanel.getTileSize() > gamePanel.player.worldY - gamePanel.player.screenY &&
-                            worldY - gamePanel.getTileSize() < gamePanel.player.worldY + gamePanel.player.screenY) {
-                            g2.drawImage(tile.image,screenX,screenY,gamePanel.getTileSize(),gamePanel.getTileSize(),null);
+
+                        if (worldX + gamePanel.getTileSize() >= gamePanel.player.worldX - gamePanel.player.screenX &&
+                            worldX  - gamePanel.getTileSize() <= gamePanel.player.worldX + gamePanel.player.screenX &&
+                            worldY + gamePanel.getTileSize() >= gamePanel.player.worldY - gamePanel.player.screenY &&
+                            worldY - gamePanel.getTileSize() <= gamePanel.player.worldY + gamePanel.player.screenY) {
+                            g2.drawImage(tile.image, screenX, screenY, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
                         }
                     }
                 }
