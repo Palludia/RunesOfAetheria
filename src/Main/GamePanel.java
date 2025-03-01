@@ -13,8 +13,6 @@ public class GamePanel extends JPanel {
     final int originalTileSize = 16;
     final int scale = 1;
     final int tileSize = originalTileSize * scale;
-    final int maxScreenCol = 160;
-    final int maxScreenRow = 96;
     public final int screenWidth = 1280; // 1280
     public final int screenHeight = 768; // 768
 
@@ -23,8 +21,8 @@ public class GamePanel extends JPanel {
     TileManager tileManager = new TileManager(this);
 
     //WORLD MAP SETTINGS
-    public final int maxWorldCol = 100;
-    public final int maxWorldRow = 100;
+    public int maxWorldCol;
+    public int maxWorldRow;
     public final int worldWidth = tileSize * maxWorldCol;
     public final int worldHeight = tileSize * maxWorldRow;
 
@@ -36,6 +34,8 @@ public class GamePanel extends JPanel {
         setFocusable(true);
         addKeyListener(keyHandler);
         requestFocusInWindow();
+        this.maxWorldCol = tileManager.getMapWidth();
+        this.maxWorldRow = tileManager.getMapHeight();
     }
 
     public void setDir(int playerDir) {
@@ -72,11 +72,4 @@ public class GamePanel extends JPanel {
         return tileSize;
     }
 
-    public int getMaxScreenCol() {
-        return maxScreenCol;
-    }
-
-    public int getMaxScreenRow() {
-        return maxScreenRow;
-    }
 }
