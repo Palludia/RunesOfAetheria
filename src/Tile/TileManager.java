@@ -21,6 +21,8 @@ public class TileManager {
     private final GamePanel gamePanel;
     private final Map<Integer, Tile> tiles; // store tiles by GID
     private List<int[][]> mapLayers; // Store each layer's tile data
+    private int mapWidth;
+    private int mapHeight;
 
 
     public TileManager(GamePanel gamePanel) {
@@ -75,6 +77,8 @@ public class TileManager {
 
             Gson gson = new Gson();
             JsonObject mapData = gson.fromJson(br, JsonObject.class);
+            mapWidth = mapData.get("width").getAsInt();
+            mapHeight = mapData.get("height").getAsInt();
 
             int mapWidth = mapData.get("width").getAsInt();
             int mapHeight = mapData.get("height").getAsInt();
@@ -105,36 +109,54 @@ public class TileManager {
     }
 
     public void draw(Graphics2D g2) {
-        // Draw all layers in order
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        // Set rendering hints once (already set in GamePanel)
+        int tileSize = gamePanel.getTileSize();
 
+        // Calculate visible tile indices (columns/rows)
+        int leftCol = (int)(gamePanel.player.worldX - gamePanel.player.screenX) / tileSize;
+        int rightCol = (int)(gamePanel.player.worldX + gamePanel.player.screenX) / tileSize + 1;
+        int topRow = (int)(gamePanel.player.worldY - gamePanel.player.screenY) / tileSize;
+        int bottomRow = (int)(gamePanel.player.worldY + gamePanel.player.screenY) / tileSize + 1;
 
-        for(int[][] layerData: mapLayers) {
-            for(int worldRow = 0; worldRow < gamePanel.getMaxScreenRow(); worldRow++) {
-                for(int worldCol = 0; worldCol < gamePanel.getMaxScreenCol(); worldCol++) {
-                    int gid = layerData[worldCol][worldRow];
-                    if(gid == 0) continue; // skip empty tiles
+        leftCol -= 1;
+        rightCol += 1;
+        topRow -= 1;
+        bottomRow += 1;
+
+        // Clamp indices to world bounds to avoid out-of-bounds
+        leftCol = Math.max(0, leftCol);
+        rightCol = Math.min(mapWidth, rightCol);
+        topRow = Math.max(0, topRow);
+        bottomRow = Math.min(mapHeight, bottomRow);
+
+        for (int[][] layerData : mapLayers) {
+            // Iterate ONLY over visible tiles
+            for (int row = topRow; row < bottomRow; row++) {
+                for (int col = leftCol; col < rightCol; col++) {
+                    int gid = layerData[col][row];
+                    if (gid == 0) continue;
 
                     Tile tile = tiles.get(gid);
-                    if(tile != null) {
-                        int worldX = worldCol * gamePanel.getTileSize();
-                        int worldY = worldRow * gamePanel.getTileSize();
-                        int screenX = (int)(worldX - gamePanel.player.worldX + gamePanel.player.screenX);
-                        int screenY = (int)(worldY - gamePanel.player.worldY + gamePanel.player.screenY);
+                    if (tile != null) {
+                        // Calculate screen coordinates
+                        int screenX = (int)(col * tileSize - gamePanel.player.worldX + gamePanel.player.screenX);
+                        int screenY = (int)(row * tileSize - gamePanel.player.worldY + gamePanel.player.screenY);
 
 
-                        if (worldX + gamePanel.getTileSize() >= gamePanel.player.worldX - gamePanel.player.screenX &&
-                            worldX  - gamePanel.getTileSize() <= gamePanel.player.worldX + gamePanel.player.screenX &&
-                            worldY + gamePanel.getTileSize() >= gamePanel.player.worldY - gamePanel.player.screenY &&
-                            worldY - gamePanel.getTileSize() <= gamePanel.player.worldY + gamePanel.player.screenY) {
-                            g2.drawImage(tile.image, screenX, screenY, gamePanel.getTileSize(), gamePanel.getTileSize(), null);
-                        }
+                        // Draw the tile
+                        g2.drawImage(tile.image, screenX, screenY, tileSize, tileSize, null);
                     }
                 }
             }
         }
+    }
+
+    public int getMapHeight() {
+        return mapHeight;
+    }
+
+    public int getMapWidth() {
+        return mapWidth;
     }
 }
 
