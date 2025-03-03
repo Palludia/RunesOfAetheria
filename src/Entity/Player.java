@@ -44,6 +44,7 @@ public class Player extends Entity{
 
     public void setPlayerDir(int playerDir) {
         this.playerDir = playerDir;
+
     }
 
     public void isMoving(boolean isMoving) {
@@ -52,22 +53,24 @@ public class Player extends Entity{
 
     public void updatePos() {
         // Check if any movement keys are held
-        if (!keyHandler.keysHeld.isEmpty()) {
-            if (keyHandler.keysHeld.contains(KeyEvent.VK_W)) { // Up
-                worldY -= speed;
-                direction = "up";
-            }
-            if (keyHandler.keysHeld.contains(KeyEvent.VK_A)) { // Left
-                worldX -= speed;
-                direction = "left";
-            }
-            if (keyHandler.keysHeld.contains(KeyEvent.VK_S)) { // Down
-                worldY += speed;
-                direction = "down";
-            }
-            if (keyHandler.keysHeld.contains(KeyEvent.VK_D)) { // Right
-                worldX += speed;
-                direction = "right";
+        if(isMoving) {
+            switch(playerDir) {
+                case LEFT:
+                    worldX -=5;
+                    direction = "left";
+                    break;
+                case UP:
+                    worldY -=5;
+                    direction = "up";
+                    break;
+                case RIGHT:
+                    worldX += 5;
+                    direction = "right";
+                    break;
+                case DOWN:
+                    worldY += 5;
+                    direction = "down";
+                    break;
             }
         }
     }
@@ -76,44 +79,26 @@ public class Player extends Entity{
 
         switch (direction) {
             case "up" -> image = walkUp;
-            case "down" -> image = walkDown;
             case "left" -> image = walkLeft;
+            case "down" -> image = walkDown;
             case "right" -> image = walkRight;
             default -> image = walkDown;
         }
 
-        if(image.length == walkDown.length) {
-            if(isMoving){
-                spriteCounter++;
+        if(isMoving){
+            spriteCounter++;
 
-                if(spriteCounter > 6) {
-                    spriteIndex++;
-                    spriteCounter = 0;
-                }
-
-                if(spriteIndex >= image.length){
-                    spriteIndex = 0;
-                }
-                g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
-            }else{
-                g2.drawImage(image[0],screenX,screenY,characterWidth,characterHeight,null);
+            if(spriteCounter > 6) {
+                spriteIndex++;
+                spriteCounter = 0;
             }
-        }else if(image.length == 8) {
-            if(isMoving) {
-                spriteCounter++;
 
-                if(spriteCounter > 6) {
-                    spriteIndex++;
-                    spriteCounter = 0;
-                }
-
-                if(spriteIndex >= image.length){
-                    spriteIndex = 0;
-                }
-                g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
-            }else {
-                g2.drawImage(image[0],screenX,screenY,characterWidth,characterHeight,null);
+            if(spriteIndex >= image.length){
+                spriteIndex = 0;
             }
+            g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
+        }else{
+            g2.drawImage(image[0],screenX,screenY,characterWidth,characterHeight,null);
         }
     }
 

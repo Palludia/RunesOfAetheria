@@ -23,16 +23,51 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int code = e.getKeyCode();
-        keysHeld.add(code); // Add the pressed key to the set of held keys
-        updateMovement(); // Update movement based on all currently held keys
+        keysHeld.add(e.getKeyCode());
+        switch(e.getKeyCode()) {
+            case KeyEvent.VK_W:
+                gamePanel.setDir(UP);
+                gamePanel.isMoving(true);
+                break;
+            case KeyEvent.VK_A:
+                gamePanel.setDir(LEFT);
+                gamePanel.isMoving(true);
+                break;
+            case KeyEvent.VK_S:
+                gamePanel.setDir(DOWN);
+                gamePanel.isMoving(true);
+                break;
+            case KeyEvent.VK_D:
+                gamePanel.setDir(RIGHT);
+                gamePanel.isMoving(true);
+                break;
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        int code = e.getKeyCode();
-        keysHeld.remove(code); // Remove the released key from the set of held keys
-        updateMovement(); // Update movement based on remaining held keys
+
+        keysHeld.remove(e.getKeyCode());
+        if(keysHeld.isEmpty()) {
+            gamePanel.isMoving(false);
+            return;
+        }
+        switch(e.getKeyCode()) {
+            case KeyEvent.VK_W:
+            case KeyEvent.VK_A:
+            case KeyEvent.VK_S:
+            case KeyEvent.VK_D:
+                if(keysHeld.contains(KeyEvent.VK_W)) {
+                    gamePanel.setDir(UP);
+                }else if(keysHeld.contains(KeyEvent.VK_A)) {
+                    gamePanel.setDir(LEFT);
+                }else if(keysHeld.contains(KeyEvent.VK_S)) {
+                    gamePanel.setDir(DOWN);
+                }else if(keysHeld.contains(KeyEvent.VK_D)) {
+                    gamePanel.setDir(RIGHT);
+                }
+                break;
+        }
     }
 
     private void updateMovement() {
