@@ -32,7 +32,7 @@ public class Game implements Runnable{
             timer += (currentTime - lastTime);
             lastTime = currentTime;
 
-            while (delta >= 1) {
+            if (delta >= 1) {
                 gamePanel.updatePos(); // Update game logic
                 gamePanel.repaint();   // Render the game
                 delta--;
