@@ -9,8 +9,8 @@ import Main.GamePanel;
 import static Utilz.Constants.Directions.*;
 
 public class KeyHandler implements KeyListener {
-    private GamePanel gamePanel;
-    public Set<Integer> keysHeld = new HashSet<Integer>(); // Tracks all currently held keys
+    GamePanel gamePanel;
+    public Set<Integer> keysHeld = new HashSet<>(); // Tracks all currently held keys
 
     public KeyHandler(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -52,45 +52,13 @@ public class KeyHandler implements KeyListener {
             gamePanel.isMoving(false);
             return;
         }
-        switch(e.getKeyCode()) {
-            case KeyEvent.VK_W:
-            case KeyEvent.VK_A:
-            case KeyEvent.VK_S:
-            case KeyEvent.VK_D:
-                if(keysHeld.contains(KeyEvent.VK_W)) {
-                    gamePanel.setDir(UP);
-                }else if(keysHeld.contains(KeyEvent.VK_A)) {
-                    gamePanel.setDir(LEFT);
-                }else if(keysHeld.contains(KeyEvent.VK_S)) {
-                    gamePanel.setDir(DOWN);
-                }else if(keysHeld.contains(KeyEvent.VK_D)) {
-                    gamePanel.setDir(RIGHT);
-                }
-                break;
-        }
-    }
-
-    private void updateMovement() {
-        // Reset all movement flags
-        boolean upPressed = keysHeld.contains(KeyEvent.VK_W);
-        boolean downPressed = keysHeld.contains(KeyEvent.VK_S);
-        boolean leftPressed = keysHeld.contains(KeyEvent.VK_A);
-        boolean rightPressed = keysHeld.contains(KeyEvent.VK_D);
-
-        // Notify the game panel about movement
-        if (upPressed || downPressed || leftPressed || rightPressed) {
-            gamePanel.isMoving(true);
-        } else {
-            gamePanel.isMoving(false);
-        }
-
-        if (upPressed) {
+        if(keysHeld.contains(KeyEvent.VK_W)) {
             gamePanel.setDir(UP);
-        } else if (downPressed) {
-            gamePanel.setDir(DOWN);
-        } else if (leftPressed) {
+        }else if(keysHeld.contains(KeyEvent.VK_A)) {
             gamePanel.setDir(LEFT);
-        } else if (rightPressed) {
+        }else if(keysHeld.contains(KeyEvent.VK_S)) {
+            gamePanel.setDir(DOWN);
+        }else if(keysHeld.contains(KeyEvent.VK_D)) {
             gamePanel.setDir(RIGHT);
         }
     }

@@ -11,6 +11,7 @@ public class Entity {
     public BufferedImage[] walkLeft = new BufferedImage[8];
     public BufferedImage[] walkRight = new BufferedImage[8];
     public BufferedImage[] walkUp = new BufferedImage[8];
+    public BufferedImage[] idleDown = new BufferedImage[1];
     public String direction;
 
 

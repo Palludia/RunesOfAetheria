@@ -7,8 +7,6 @@ import Tile.TileManager;
 import javax.swing.*;
 import java.awt.*;
 
-import static Utilz.Constants.Directions.*;
-
 public class GamePanel extends JPanel {
     final int originalTileSize = 16;
     final int scale = 1;
@@ -23,8 +21,6 @@ public class GamePanel extends JPanel {
     //WORLD MAP SETTINGS
     public int maxWorldCol;
     public int maxWorldRow;
-    public final int worldWidth = tileSize * maxWorldCol;
-    public final int worldHeight = tileSize * maxWorldRow;
 
 
     public GamePanel() {
