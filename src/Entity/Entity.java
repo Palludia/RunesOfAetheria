@@ -1,5 +1,6 @@
 package Entity;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Entity {
@@ -14,6 +15,8 @@ public class Entity {
     public BufferedImage[] idleDown = new BufferedImage[1];
     public String direction;
 
-
-
+    //Player Collision Box
+    public Rectangle solidArea;
+    public int solidAreaX, solidAreaY;
+    public boolean collisionOn = false;
 }
