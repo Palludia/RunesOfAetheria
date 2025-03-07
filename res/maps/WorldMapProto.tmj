@@ -341,7 +341,8 @@
          "spacing":0,
          "tilecount":1,
          "tileheight":16,
-         "tilewidth":16
+         "tilewidth":16,
+         "collision":false
         }, 
         {
          "columns":1,
@@ -354,7 +355,8 @@
          "spacing":0,
          "tilecount":1,
          "tileheight":16,
-         "tilewidth":16
+         "tilewidth":16,
+         "collision":false
         }, 
         {
          "columns":8,
@@ -367,7 +369,8 @@
          "spacing":0,
          "tilecount":56,
          "tileheight":16,
-         "tilewidth":16
+         "tilewidth":16,
+         "collision":true
         }],
  "tilewidth":16,
  "type":"map",

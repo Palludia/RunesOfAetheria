@@ -1,14 +1,12 @@
 package Main;
 
 public class Game implements Runnable{
-    private final GameFrame gameFrame;
     private final GamePanel gamePanel;
-    private final int FPS_SET = 60;
     private Thread gameThread;
 
     public Game(){
         gamePanel = new GamePanel();
-        gameFrame = new GameFrame(gamePanel);
+        GameFrame gameFrame = new GameFrame(gamePanel);
         startGameLoop();
     }
 
@@ -19,6 +17,7 @@ public class Game implements Runnable{
 
     @Override
     public void run() {
+        int FPS_SET = 60;
         double drawInterval = 1000000000.0 / FPS_SET; // Time per frame (in nanoseconds)
         double delta = 0;
         long lastTime = System.nanoTime();
@@ -49,8 +48,7 @@ public class Game implements Runnable{
             // Prevent CPU overuse
             try {
                 Thread.sleep(1); // Sleep for 1ms to avoid maxing out CPU
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException _) {
             }
         }
     }
