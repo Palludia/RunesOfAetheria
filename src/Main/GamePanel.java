@@ -9,14 +9,15 @@ import java.awt.*;
 
 public class GamePanel extends JPanel {
     final int originalTileSize = 16;
-    final int scale = 1;
+    final int scale = 3;
     final int tileSize = originalTileSize * scale;
-    public final int screenWidth = 1280; // 1280
-    public final int screenHeight = 768; // 768
+    public final int screenWidth = 1280; // 1280 Default
+    public final int screenHeight = 768; // 768 Default
 
-    KeyHandler keyHandler = new KeyHandler(this);
-    public Player player = new Player(this,keyHandler);
+    KeyHandler keyH = new KeyHandler();
+    public Player player = new Player(this,keyH);
     TileManager tileManager = new TileManager(this);
+    public CollisionChecker check = new CollisionChecker(this);
 
     //WORLD MAP SETTINGS
     public int maxWorldCol;
@@ -28,18 +29,10 @@ public class GamePanel extends JPanel {
         setBackground(Color.black);
         setDoubleBuffered(true);
         setFocusable(true);
-        addKeyListener(keyHandler);
+        addKeyListener(keyH);
         requestFocusInWindow();
         this.maxWorldCol = tileManager.getMapWidth();
         this.maxWorldRow = tileManager.getMapHeight();
-    }
-
-    public void setDir(int playerDir) {
-        player.setPlayerDir(playerDir);
-    }
-
-    public void isMoving(boolean isMoving){
-        player.isMoving(isMoving);
     }
 
 
@@ -49,9 +42,9 @@ public class GamePanel extends JPanel {
 
         Graphics2D g2 = (Graphics2D)g;
 
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+//        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+//        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+//        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
         tileManager.draw(g2);
 

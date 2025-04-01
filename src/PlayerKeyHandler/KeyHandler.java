@@ -9,59 +9,42 @@ import Main.GamePanel;
 import static Utilz.Constants.Directions.*;
 
 public class KeyHandler implements KeyListener {
-    private final GamePanel gamePanel;
-    private final Set<Integer> keysHeld = new HashSet<>();
+    public boolean shiftPressed, upPressed, downPressed, leftPressed, rightPressed;
+    public boolean isMoving = true;
 
-    public KeyHandler(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
-    }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Not used
+        // TODO Auto-generated method stub
+
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        keysHeld.add(e.getKeyCode());
-        updateMovement();
+
+        int code = e.getExtendedKeyCode();
+
+        switch(code) {
+            case KeyEvent.VK_W -> upPressed = true;
+            case KeyEvent.VK_S -> downPressed = true;
+            case KeyEvent.VK_A -> leftPressed = true;
+            case KeyEvent.VK_D -> rightPressed = true;
+            case KeyEvent.VK_SHIFT -> shiftPressed = true;
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        keysHeld.remove(e.getKeyCode());
-        updateMovement();
-    }
 
-    private void updateMovement() {
-        if (keysHeld.isEmpty()) {
-            gamePanel.isMoving(false);
-            return;
+        int code = e.getExtendedKeyCode();
+
+        switch(code) {
+            case KeyEvent.VK_W -> upPressed = false;
+            case KeyEvent.VK_S -> downPressed = false;
+            case KeyEvent.VK_A -> leftPressed = false;
+            case KeyEvent.VK_D -> rightPressed = false;
+            case KeyEvent.VK_SHIFT -> shiftPressed = false;
         }
 
-        boolean up = keysHeld.contains(KeyEvent.VK_W);
-        boolean left = keysHeld.contains(KeyEvent.VK_A);
-        boolean down = keysHeld.contains(KeyEvent.VK_S);
-        boolean right = keysHeld.contains(KeyEvent.VK_D);
-
-        if (up && left) {
-            gamePanel.setDir(UP_LEFT);
-        } else if (up && right) {
-            gamePanel.setDir(UP_RIGHT);
-        } else if (down && left) {
-            gamePanel.setDir(DOWN_LEFT);
-        } else if (down && right) {
-            gamePanel.setDir(DOWN_RIGHT);
-        } else if (up) {
-            gamePanel.setDir(UP);
-        } else if (left) {
-            gamePanel.setDir(LEFT);
-        } else if (down) {
-            gamePanel.setDir(DOWN);
-        } else if (right) {
-            gamePanel.setDir(RIGHT);
-        }
-
-        gamePanel.isMoving(true);
     }
 }

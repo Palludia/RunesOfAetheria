@@ -2,6 +2,7 @@ package Main;
 
 public class Game implements Runnable{
     private final GamePanel gamePanel;
+    int FPS_SET = 60;
     private Thread gameThread;
 
     public Game(){
@@ -17,7 +18,6 @@ public class Game implements Runnable{
 
     @Override
     public void run() {
-        int FPS_SET = 60;
         double drawInterval = 1000000000.0 / FPS_SET; // Time per frame (in nanoseconds)
         double delta = 0;
         long lastTime = System.nanoTime();
@@ -31,9 +31,9 @@ public class Game implements Runnable{
             timer += (currentTime - lastTime);
             lastTime = currentTime;
 
-            if (delta >= 1) {
-                gamePanel.updatePos(); // Update game logic
-                gamePanel.repaint();   // Render the game
+            if(delta >= 1) {
+                gamePanel.updatePos(); // Update game
+                gamePanel.repaint();
                 delta--;
                 frameCount++;
             }
@@ -43,12 +43,6 @@ public class Game implements Runnable{
                 System.out.println("FPS: " + frameCount);
                 frameCount = 0;
                 timer = 0;
-            }
-
-            // Prevent CPU overuse
-            try {
-                Thread.sleep(1); // Sleep for 1ms to avoid maxing out CPU
-            } catch (InterruptedException _) {
             }
         }
     }

@@ -19,6 +19,7 @@ public class TileManager {
     public final GamePanel gamePanel;
     public final Map<Integer, Tile> tiles; // store tiles by GID
     public final List<int[][]> mapLayers; // Store each layer's tile data
+    public final List<Rectangle> collisionBoxes = new ArrayList<>(); // Store rectangle collisions
     public int mapWidth;
     public int mapHeight;
 
@@ -27,13 +28,13 @@ public class TileManager {
         this.gamePanel = gamePanel;
         this.tiles = new HashMap<>();
         this.mapLayers = new ArrayList<>();
-        loadTileSet("/maps/WorldMapProto.tmj");
-        loadMap("/maps/WorldMapProto.tmj");
+        loadTileSet("/maps/Map1.tmj");
+        loadMap("/maps/Map1.tmj");
     }
 
     public void loadTileSet(String mapPath) {
         try(InputStream is = getClass().getResourceAsStream(mapPath);
-            BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)))) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 
             Gson gson = new Gson();
             JsonObject mapData = gson.fromJson(br,JsonObject.class);
@@ -51,7 +52,7 @@ public class TileManager {
                 int firstGID = tileset.get("firstgid").getAsInt(); // FIRST GID in this tileset
 
 
-                BufferedImage tilesetImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(tilesetImagePath)));
+                BufferedImage tilesetImage = ImageIO.read(getClass().getResourceAsStream(tilesetImagePath));
 
                 // Slicing the tileset image into individual tiles
                 int tileCount = tileset.get("tilecount").getAsInt();
@@ -68,43 +69,47 @@ public class TileManager {
             }
         }catch (Exception _){
         }
+
     }
 
     public void loadMap(String mapPath) {
-        try(InputStream is = getClass().getResourceAsStream(mapPath)) {
-            assert is != null;
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(is))){
+        try (InputStream is = getClass().getResourceAsStream(mapPath);
+             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 
-                Gson gson = new Gson();
-                JsonObject mapData = gson.fromJson(br, JsonObject.class);
-                mapWidth = mapData.get("width").getAsInt();
-                mapHeight = mapData.get("height").getAsInt();
+            Gson gson = new Gson();
+            JsonObject mapData = gson.fromJson(br, JsonObject.class);
+            mapWidth = mapData.get("width").getAsInt();
+            mapHeight = mapData.get("height").getAsInt();
+            JsonArray layers = mapData.getAsJsonArray("layers");
 
-                int mapWidth = mapData.get("width").getAsInt();
-                int mapHeight = mapData.get("height").getAsInt();
+            for (JsonElement layerElement : layers) {
+                JsonObject layer = layerElement.getAsJsonObject();
+                String type = layer.get("type").getAsString();
 
-                JsonArray layers = mapData.getAsJsonArray("layers");
-                for(JsonElement layerElement : layers) {
-                    JsonObject layer = layerElement.getAsJsonObject();
-                    if(!layer.get("type").getAsString().equals("tilelayer")) continue;
-
+                if (type.equals("tilelayer")) {
                     int[][] layerData = new int[mapWidth][mapHeight];
                     JsonArray data = layer.getAsJsonArray("data");
-                    int col = 0, row = 0;
-
-                    for(int i = 0; i < data.size(); i++) {
-                        int gid = data.get(i).getAsInt();
-                        layerData[col][row] = gid; // Store raw GID directly
-
-                        if(++col == mapWidth) {
-                            col = 0;
-                            row++;
+                    int index = 0;
+                    for (int y = 0; y < mapHeight; y++) {
+                        for (int x = 0; x < mapWidth; x++) {
+                            layerData[x][y] = data.get(index++).getAsInt();
                         }
                     }
                     mapLayers.add(layerData);
+                } else if (type.equals("objectgroup")) {
+                    JsonArray objects = layer.getAsJsonArray("objects");
+                    for (JsonElement objectElement : objects) {
+                        JsonObject object = objectElement.getAsJsonObject();
+                        int x = object.get("x").getAsInt();
+                        int y = object.get("y").getAsInt();
+                        int width = object.get("width").getAsInt();
+                        int height = object.get("height").getAsInt();
+
+                        collisionBoxes.add(new Rectangle(x, y, width, height));
+                    }
                 }
             }
-        } catch (Exception _){
+        } catch (Exception _) {
         }
     }
 
@@ -159,5 +164,4 @@ public class TileManager {
         return mapWidth;
     }
 }
-
 

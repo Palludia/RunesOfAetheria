@@ -7,90 +7,120 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Objects;
-
-import static Utilz.Constants.Directions.*;
 
 public class Player extends Entity{
     GamePanel gamePanel;
-    KeyHandler keyHandler;
-    private int playerDir = -1;
-    private boolean isMoving = false;
+    KeyHandler keyH;
     public int spriteIndex = 0;
     public int spriteCounter = 0;
-    final int characterWidth = 80;
-    final int characterHeight = 80;
+    public final int characterWidth = 120;
+    public final int characterHeight = 120;
     public final int screenX;
     public final int screenY;
 
-    public Player(GamePanel gamePanel, KeyHandler keyHandler) {
+    public Player(GamePanel gamePanel, KeyHandler keyH) {
         this.gamePanel = gamePanel;
-        this.keyHandler = keyHandler;
+        this.keyH = keyH;
 
         //Player Camera Center Settings
         screenX = gamePanel.screenWidth / 2 - (gamePanel.getTileSize()/2);
         screenY = gamePanel.screenHeight / 2 - (gamePanel.getTileSize()/2);
+
+        //Player Solid Area for Collisions
+        solidArea = new Rectangle(45, 75, 30, 20);
+
+        solidAreaX = solidArea.x;
+        solidAreaY = solidArea.y;
 
         setDefaultValues();
         getPlayerImage();
     }
 
     public void setDefaultValues() {
-        worldX = gamePanel.getTileSize() * 78 - (gamePanel.getTileSize()/2);
-        worldY = gamePanel.getTileSize() * 42 - (gamePanel.getTileSize()/2);
+        //Default player Spawn point
+        worldX = gamePanel.getTileSize() * 399 - (gamePanel.getTileSize()/2);
+        worldY = gamePanel.getTileSize() * 728 - (gamePanel.getTileSize()/2);
+
         speed = 4;
-        direction = "down";
-    }
-
-    public void setPlayerDir(int playerDir) {
-        this.playerDir = playerDir;
-
-    }
-
-    public void isMoving(boolean isMoving) {
-        this.isMoving = isMoving;
+        direction = "idle";
+        prevDirection = "down";
     }
 
     public void updatePos() {
-        // Check if any movement keys are held
-        if(isMoving) {
-            switch(playerDir) {
-                case LEFT :
-                case RIGHT :
-                    worldX += playerDir == LEFT ? -speed : speed;
-                    direction = playerDir == LEFT ? "left" : "right";
-                    break;
-                case UP :
-                case DOWN :
-                    worldY += playerDir == UP ? -speed : speed;
-                    direction = playerDir == UP ? "up" : "down";
-                    break;
-                case UP_RIGHT :
-                case UP_LEFT :
-                    worldY += -speed;
-                    worldX += playerDir == UP_RIGHT ? speed : -speed;
-                    direction = "up";
-                    break;
-                case DOWN_RIGHT :
-                case DOWN_LEFT :
-                    worldY += speed;
-                    worldX += playerDir == DOWN_RIGHT ? speed : -speed;
-                    direction = "down";
+        if(keyH.upPressed   || keyH.downPressed  ||
+           keyH.leftPressed || keyH.rightPressed) {
+
+            if(keyH.upPressed) {
+                direction = "up";
+                prevDirection = "up";
+
+            }else if(keyH.downPressed) {
+                direction = "down";
+                prevDirection = "down";
+
+            }else if(keyH.leftPressed) {
+                direction = "left";
+                prevDirection = "left";
+
+            }else {
+                direction = "right";
+                prevDirection = "right";
+
             }
+
+            //CHECK FOR COLLISIONS
+            collisionOn = false;
+            gamePanel.check.checkCollision(this);
+
+            //CHECK FOR OBJECTS
+            //int objIndex = gamePanel.check.checkObject(this, true);
+            //pickUpObject(objIndex);
+
+            //IF COLLISION IS "ON" PLAYER CAN'T MOVE
+            if(!collisionOn) {
+                double diagonalSpeed = speed / Math.sqrt(2);
+                switch(direction) {
+                    case "up":
+                    case "down":
+                        worldY += keyH.upPressed ? -speed : speed;
+                        //Implementation of Diagonal Movements When Going UP
+                        if(keyH.rightPressed || keyH.leftPressed) {
+                            direction = keyH.rightPressed ? "right" : "left";
+                            prevDirection = keyH.rightPressed ? "right" : "left";
+                            worldX += keyH.rightPressed ? Math.ceil(diagonalSpeed) : -diagonalSpeed;
+                        }
+                        break;
+                    case "left":
+                    case "right":
+                        worldX += keyH.leftPressed ? -speed : speed;
+                        break;
+                }
+            }
+            //speed = keyH.shiftPressed ? isBoosted ? 4 : 3 : 2;
+        }else {
+            direction = "idle";
         }
     }
+
     public void draw(Graphics2D g2) {
-        BufferedImage[] image;
+        BufferedImage[] image = idleDown;
 
-        switch (direction) {
-            case "up" -> image = walkUp;
-            case "left" -> image = walkLeft;
-            case "down" -> image = walkDown;
-            case "right" -> image = walkRight;
-            default -> image = idleDown;
-        }
+        image = switch (direction) {
+            case "up" -> walkUp;
+            case "left" -> walkLeft;
+            case "down" -> walkDown;
+            case "right" -> walkRight;
+            case "idle" -> switch(prevDirection){
+                case "right" -> idleRight;
+                case "left" -> idleLeft;
+                case "up" -> idleUp;
+                case "down" -> idleDown;
+                default -> image;
+            };
+            default -> null;
+        };
 
-        if(isMoving){
+        if(keyH.isMoving){
             spriteCounter++;
 
             if(spriteCounter > 6) {
@@ -102,8 +132,8 @@ public class Player extends Entity{
                 spriteIndex = 0;
             }
             g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
-        }else{
-            g2.drawImage(image[0],screenX,screenY,characterWidth,characterHeight,null);
+            g2.setColor(Color.RED);
+            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
         }
     }
 
@@ -111,18 +141,18 @@ public class Player extends Entity{
         try{
 
             for(int i = 0; i<6; i++) {
-                walkDown[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Walk(Down)/" + (i + 1) + ".png")));
+                walkDown[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Down)/" + (i + 1) + ".png"));
             }
 
-            walkLeft[0] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Walk(Left)/1(Idle).png")));
-            walkUp[0] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Walk(Up)/1(Idle).png")));
-            for(int i = 1; i<8; i++) {
-                walkLeft[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Walk(Left)/" + (i + 1) + ".png")));
-                walkUp[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Walk(Up)/" + (i + 1) + ".png")));
-            }
+            idleDown[0] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Down)/1.png"));
+            idleUp[0] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Up)/1.png"));
+            idleLeft[0] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Left)/1.png"));
+            idleRight[0] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Right)/1.png"));
 
-            for(int i = 0; i<8; i++){
-                walkRight[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/Walk(Right)/" + (i + 1) + ".png")));
+            for(int i = 0; i<8; i++) {
+                walkLeft[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Left)/" + (i + 1) + ".png"));
+                walkUp[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Up)/" + (i + 1) + ".png"));
+                walkRight[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Right)/" + (i + 1) + ".png"));
             }
 
         } catch (IOException _) {
