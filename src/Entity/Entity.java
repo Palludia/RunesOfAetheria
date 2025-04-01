@@ -13,7 +13,11 @@ public class Entity {
     public BufferedImage[] walkRight = new BufferedImage[8];
     public BufferedImage[] walkUp = new BufferedImage[8];
     public BufferedImage[] idleDown = new BufferedImage[1];
+    public BufferedImage[] idleUp = new BufferedImage[1];
+    public BufferedImage[] idleLeft = new BufferedImage[1];
+    public BufferedImage[] idleRight = new BufferedImage[1];
     public String direction;
+    public String prevDirection;
 
     //Player Collision Box
     public Rectangle solidArea;
