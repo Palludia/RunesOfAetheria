@@ -2,29 +2,33 @@ package Entity;
 
 import Main.GamePanel;
 import PlayerKeyHandler.KeyHandler;
+import PlayerKeyHandler.MouseHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class Player extends Entity{
+public class Player extends Entity {
     GamePanel gamePanel;
     KeyHandler keyH;
+    MouseHandler mouseH;
     public int spriteIndex = 0;
     public int spriteCounter = 0;
     public final int characterWidth = 120;
     public final int characterHeight = 120;
     public final int screenX;
     public final int screenY;
+    public BufferedImage[] image = idleDown;
 
-    public Player(GamePanel gamePanel, KeyHandler keyH) {
+    public Player(GamePanel gamePanel, KeyHandler keyH, MouseHandler mouseH) {
         this.gamePanel = gamePanel;
         this.keyH = keyH;
+        this.mouseH = mouseH;
 
         //Player Camera Center Settings
-        screenX = gamePanel.screenWidth / 2 - (gamePanel.getTileSize()/2);
-        screenY = gamePanel.screenHeight / 2 - (gamePanel.getTileSize()/2);
+        screenX = gamePanel.screenWidth / 2 - (gamePanel.getTileSize() / 2);
+        screenY = gamePanel.screenHeight / 2 - (gamePanel.getTileSize() / 2);
 
         //Player Solid Area for Collisions
         solidArea = new Rectangle(45, 75, 30, 20);
@@ -38,8 +42,8 @@ public class Player extends Entity{
 
     public void setDefaultValues() {
         //Default player Spawn point
-        worldX = gamePanel.getTileSize() * 399 - (gamePanel.getTileSize()/2);
-        worldY = gamePanel.getTileSize() * 728 - (gamePanel.getTileSize()/2);
+        worldX = gamePanel.getTileSize() * 399 - (gamePanel.getTileSize() / 2);
+        worldY = gamePanel.getTileSize() * 728 - (gamePanel.getTileSize() / 2);
 
         speed = 4;
         direction = "idle";
@@ -47,22 +51,22 @@ public class Player extends Entity{
     }
 
     public void updatePos() {
-        if(keyH.upPressed   || keyH.downPressed  ||
-           keyH.leftPressed || keyH.rightPressed) {
+        if (keyH.upPressed || keyH.downPressed ||
+                keyH.leftPressed || keyH.rightPressed) {
 
-            if(keyH.upPressed) {
+            if (keyH.upPressed) {
                 direction = "up";
                 prevDirection = "up";
 
-            }else if(keyH.downPressed) {
+            } else if (keyH.downPressed) {
                 direction = "down";
                 prevDirection = "down";
 
-            }else if(keyH.leftPressed) {
+            } else if (keyH.leftPressed) {
                 direction = "left";
                 prevDirection = "left";
 
-            }else {
+            } else {
                 direction = "right";
                 prevDirection = "right";
 
@@ -77,14 +81,14 @@ public class Player extends Entity{
             //pickUpObject(objIndex);
 
             //IF COLLISION IS "ON" PLAYER CAN'T MOVE
-            if(!collisionOn) {
+            if (!collisionOn) {
                 double diagonalSpeed = speed / Math.sqrt(2);
-                switch(direction) {
+                switch (direction) {
                     case "up":
                     case "down":
                         worldY += keyH.upPressed ? -speed : speed;
                         //Implementation of Diagonal Movements When Going UP
-                        if(keyH.rightPressed || keyH.leftPressed) {
+                        if (keyH.rightPressed || keyH.leftPressed) {
                             direction = keyH.rightPressed ? "right" : "left";
                             prevDirection = keyH.rightPressed ? "right" : "left";
                             worldX += keyH.rightPressed ? Math.ceil(diagonalSpeed) : -diagonalSpeed;
@@ -97,13 +101,12 @@ public class Player extends Entity{
                 }
             }
             //speed = keyH.shiftPressed ? isBoosted ? 4 : 3 : 2;
-        }else {
+        } else {
             direction = "idle";
         }
     }
 
     public void draw(Graphics2D g2) {
-        BufferedImage[] image = idleDown;
 
         image = switch (direction) {
             case "up" -> walkUp;
@@ -120,7 +123,14 @@ public class Player extends Entity{
             default -> null;
         };
 
-        if(keyH.isMoving){
+        if(mouseH.isAttacking) {
+            image = switch (prevDirection) {
+                case "left" -> AttackLeft;
+                case "down" -> AttackFront;
+                case "right" -> AttackRight;
+                default -> idleDown;
+            };
+        }
             spriteCounter++;
 
             if(spriteCounter > 6) {
@@ -134,13 +144,13 @@ public class Player extends Entity{
             g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
             g2.setColor(Color.RED);
             g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
-        }
+
     }
 
     public void getPlayerImage() {
-        try{
+        try {
 
-            for(int i = 0; i<6; i++) {
+            for (int i = 0; i < 6; i++) {
                 walkDown[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Down)/" + (i + 1) + ".png"));
             }
 
@@ -149,13 +159,23 @@ public class Player extends Entity{
             idleLeft[0] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Left)/1.png"));
             idleRight[0] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Right)/1.png"));
 
-            for(int i = 0; i<8; i++) {
+            for (int i = 0; i < 8; i++) {
                 walkLeft[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Left)/" + (i + 1) + ".png"));
                 walkUp[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Up)/" + (i + 1) + ".png"));
                 walkRight[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Right)/" + (i + 1) + ".png"));
             }
+            for (int i = 0; i < 5; i++) {
+                AttackFront[i] = ImageIO.read(getClass().getResourceAsStream("/player/Attack(Front)/" + (i + 1) + ".png"));
+                AttackLeft[i] = ImageIO.read(getClass().getResourceAsStream("/player/Attack(Left)/" + (i + 1) + ".png"));
+                AttackRight[i] = ImageIO.read(getClass().getResourceAsStream("/player/Attack(Right)/" + (i + 1) + ".png"));
+            }
 
         } catch (IOException _) {
+
         }
+    }
+
+    public String getDirection(){
+        return direction;
     }
 }
