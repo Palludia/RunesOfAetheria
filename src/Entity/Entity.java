@@ -19,6 +19,7 @@ public class Entity {
     public BufferedImage[] AttackFront = new BufferedImage[5];
     public BufferedImage[] AttackLeft = new BufferedImage[5];
     public BufferedImage[] AttackRight = new BufferedImage[5];
+    public BufferedImage[] AttackUp = new BufferedImage[5];
     public String direction;
     public String prevDirection;
 
