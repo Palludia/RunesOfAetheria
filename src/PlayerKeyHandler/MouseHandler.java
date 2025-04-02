@@ -17,7 +17,7 @@ public class MouseHandler implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(!isAttacking) {
+        if(!isAttacking && e.getButton() == MouseEvent.BUTTON1) {
             isAttacking = true;
             System.out.println("I AM ATTACKING");
         }

@@ -128,6 +128,7 @@ public class Player extends Entity {
                 case "left" -> AttackLeft;
                 case "down" -> AttackFront;
                 case "right" -> AttackRight;
+                case "up" -> AttackUp;
                 default -> idleDown;
             };
         }
@@ -142,8 +143,8 @@ public class Player extends Entity {
                 spriteIndex = 0;
             }
             g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
-            g2.setColor(Color.RED);
-            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
+//            g2.setColor(Color.RED);
+//            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
 
     }
 
@@ -165,9 +166,10 @@ public class Player extends Entity {
                 walkRight[i] = ImageIO.read(getClass().getResourceAsStream("/player/Walk(Right)/" + (i + 1) + ".png"));
             }
             for (int i = 0; i < 5; i++) {
-                AttackFront[i] = ImageIO.read(getClass().getResourceAsStream("/player/Attack(Front)/" + (i + 1) + ".png"));
+                AttackFront[i] = ImageIO.read(getClass().getResourceAsStream("/player/Attack(Down)/" + (i + 1) + ".png"));
                 AttackLeft[i] = ImageIO.read(getClass().getResourceAsStream("/player/Attack(Left)/" + (i + 1) + ".png"));
                 AttackRight[i] = ImageIO.read(getClass().getResourceAsStream("/player/Attack(Right)/" + (i + 1) + ".png"));
+                AttackUp[i] = ImageIO.read(getClass().getResourceAsStream("/player/Attack(Up)/" + (i + 1) + ".png"));
             }
 
         } catch (IOException _) {
