@@ -13,6 +13,7 @@ public class KeyHandler implements KeyListener {
     public boolean isMoving = true;
 
 
+
     @Override
     public void keyTyped(KeyEvent e) {
         // TODO Auto-generated method stub
@@ -31,6 +32,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D -> rightPressed = true;
             case KeyEvent.VK_SHIFT -> shiftPressed = true;
         }
+        isMoving = true;
     }
 
     @Override
@@ -46,5 +48,6 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_SHIFT -> shiftPressed = false;
         }
 
+        isMoving = false;
     }
 }

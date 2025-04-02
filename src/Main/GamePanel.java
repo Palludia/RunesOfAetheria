@@ -2,6 +2,7 @@ package Main;
 
 import Entity.Player;
 import PlayerKeyHandler.KeyHandler;
+import PlayerKeyHandler.MouseHandler;
 import Tile.TileManager;
 
 import javax.swing.*;
@@ -15,7 +16,8 @@ public class GamePanel extends JPanel {
     public final int screenHeight = 768; // 768 Default
 
     KeyHandler keyH = new KeyHandler();
-    public Player player = new Player(this,keyH);
+    MouseHandler mouseH = new MouseHandler();
+    public Player player = new Player(this,keyH, mouseH);
     TileManager tileManager = new TileManager(this);
     public CollisionChecker check = new CollisionChecker(this);
 
@@ -30,6 +32,8 @@ public class GamePanel extends JPanel {
         setDoubleBuffered(true);
         setFocusable(true);
         addKeyListener(keyH);
+        addMouseListener(mouseH);
+        mouseH.setPlayer(player);
         requestFocusInWindow();
         this.maxWorldCol = tileManager.getMapWidth();
         this.maxWorldRow = tileManager.getMapHeight();
