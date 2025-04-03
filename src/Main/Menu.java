@@ -1,13 +1,17 @@
 package Main;
 
+import Objects.OBJ_HEART;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class Menu {
     GamePanel gp;
     private Image backgroundImage;
+
 
     public Menu(GamePanel gp){
         this.gp = gp;
@@ -17,10 +21,7 @@ public class Menu {
         }catch(IOException e){
             e.printStackTrace();
         }
-    }
 
-    public void draw(Graphics2D g2) {
-        drawTitleScreen(g2); // Call the method to draw the title screen
     }
 
     public void drawTitleScreen(Graphics2D g2) {
@@ -91,4 +92,12 @@ public class Menu {
         }
 
     }
+
+    public void drawPlayScreen(Graphics2D g2) {
+        gp.tileManager.draw(g2);
+        gp.player.draw(g2);
+        gp.player.drawPlayerHeart(g2);
+    }
+
+
 }

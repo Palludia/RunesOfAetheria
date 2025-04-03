@@ -46,13 +46,12 @@ public class KeyHandler implements KeyListener {
             }
             if(code == KeyEvent.VK_ENTER) {
                 if(gp.commandNum == 0) {
-                    gp.gameState = gp.PLAY_STATE;
+                    gp.setGameState(1); // PLAY STATE
                 }else if(gp.commandNum == 2) {
                     System.exit(0);
                 }
             }
         }
-
 
         if(gp.gameState == gp.PLAY_STATE) {
             switch(code) {

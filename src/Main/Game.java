@@ -4,6 +4,8 @@ public class Game implements Runnable{
     private final GamePanel gamePanel;
     int FPS_SET = 60;
     private Thread gameThread;
+    private int currentMusicState = -1;
+
 
     public Game(){
         gamePanel = new GamePanel();
@@ -15,6 +17,7 @@ public class Game implements Runnable{
         gameThread = new Thread(this);
         gameThread.start();
     }
+
 
     @Override
     public void run() {
