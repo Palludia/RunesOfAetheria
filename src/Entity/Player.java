@@ -1,6 +1,7 @@
 package Entity;
 
 import Main.GamePanel;
+import Objects.OBJ_HEART;
 import PlayerKeyHandler.KeyHandler;
 import PlayerKeyHandler.MouseHandler;
 
@@ -20,6 +21,7 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
     public BufferedImage[] image = idleDown;
+    public BufferedImage heart_full, heart_blank, heart_half;
 
     public Player(GamePanel gamePanel, KeyHandler keyH, MouseHandler mouseH) {
         this.gamePanel = gamePanel;
@@ -38,6 +40,10 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
+        OBJ_HEART heart = new OBJ_HEART(gamePanel);
+        heart_full = heart.image1;
+        heart_half = heart.image2;
+        heart_blank = heart.image3;
     }
 
     public void setDefaultValues() {
@@ -48,6 +54,11 @@ public class Player extends Entity {
         speed = 4;
         direction = "idle";
         prevDirection = "down";
+
+        // Player Status
+        maxLife = 10;
+        life = 5;
+        gamePanel.playMusic(0);
     }
 
     public void updatePos() {
@@ -146,6 +157,35 @@ public class Player extends Entity {
 //            g2.setColor(Color.RED);
 //            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
 
+    }
+
+    public void drawPlayerHeart(Graphics2D g2) {
+        int x = gamePanel.getTileSize() / 2;
+        int y = gamePanel.getTileSize() / 2;
+
+        // 1. First draw all blank hearts (background)
+        for (int i = 0; i < gamePanel.player.maxLife / 2; i++) {
+            g2.drawImage(heart_blank, x, y, null);
+            x += gamePanel.getTileSize();
+        }
+
+        // 2. Reset position for filled hearts
+        x = gamePanel.getTileSize() / 2;
+
+        // 3. Draw filled hearts (improved version)
+        int fullHearts = gamePanel.player.life / 2;
+        int halfHearts = gamePanel.player.life % 2;
+
+        // Draw full hearts
+        for (int i = 0; i < fullHearts; i++) {
+            g2.drawImage(heart_full, x, y, null);
+            x += gamePanel.getTileSize();
+        }
+
+        // Draw half heart if needed
+        if (halfHearts > 0) {
+            g2.drawImage(heart_half, x, y, null);
+        }
     }
 
     public void getPlayerImage() {

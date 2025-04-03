@@ -15,8 +15,9 @@ public class GamePanel extends JPanel {
     public final int screenWidth = 1280; // 1280 Default
     public final int screenHeight = 768; // 768 Default
 
+    Sound sound = new Sound();
     KeyHandler keyH = new KeyHandler(this);
-    MouseHandler mouseH = new MouseHandler();
+    MouseHandler mouseH = new MouseHandler(this);
     public Player player = new Player(this,keyH, mouseH);
     TileManager tileManager = new TileManager(this);
     public CollisionChecker check = new CollisionChecker(this);
@@ -30,6 +31,7 @@ public class GamePanel extends JPanel {
     public final int PLAY_STATE = 1;
     public int gameState = TITLE_STATE;
     public int commandNum = 0;
+
 
 
     public GamePanel() {
@@ -54,16 +56,14 @@ public class GamePanel extends JPanel {
         Graphics2D g2 = (Graphics2D)g;
 
         if(gameState == TITLE_STATE) {
-            menu.draw(g2);
+            menu.drawTitleScreen(g2);
         }else if(gameState == PLAY_STATE) {
-            tileManager.draw(g2);
-            player.draw(g2);
+           menu.drawPlayScreen(g2);
         }
 
 //        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 //        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 //        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-
         g2.dispose();
     }
 
@@ -75,4 +75,28 @@ public class GamePanel extends JPanel {
         return tileSize;
     }
 
+    public void playMusic(int i) {
+        sound.setFile(i);
+        sound.play();
+        sound.loop();
+    }
+
+    public void stopMusic() {
+        sound.stop();
+    }
+
+    public void playSE(int i) {
+        sound.setFile(i);
+        sound.play();
+    }
+
+    public void setGameState(int gameState) {
+        this.gameState = gameState;
+        stopMusic();
+        if(this.gameState == 0) {
+            playMusic(0);
+        }else if(this.gameState == 1){
+            playMusic(1);
+        }
+    }
 }

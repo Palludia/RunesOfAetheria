@@ -46,22 +46,24 @@ public class KeyHandler implements KeyListener {
             }
             if(code == KeyEvent.VK_ENTER) {
                 if(gp.commandNum == 0) {
-                    gp.gameState = gp.PLAY_STATE;
+                    gp.setGameState(1); // PLAY STATE
                 }else if(gp.commandNum == 2) {
                     System.exit(0);
                 }
             }
         }
 
-
-        switch(code) {
-            case KeyEvent.VK_W -> upPressed = true;
-            case KeyEvent.VK_S -> downPressed = true;
-            case KeyEvent.VK_A -> leftPressed = true;
-            case KeyEvent.VK_D -> rightPressed = true;
-            case KeyEvent.VK_SHIFT -> shiftPressed = true;
+        if(gp.gameState == gp.PLAY_STATE) {
+            switch(code) {
+                case KeyEvent.VK_W -> upPressed = true;
+                case KeyEvent.VK_S -> downPressed = true;
+                case KeyEvent.VK_A -> leftPressed = true;
+                case KeyEvent.VK_D -> rightPressed = true;
+                case KeyEvent.VK_SHIFT -> shiftPressed = true;
+            }
+            isMoving = true;
         }
-        isMoving = true;
+
     }
 
     @Override
