@@ -4,6 +4,7 @@ import Main.Game;
 import Main.GamePanel;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Entity_Enemy {
 
@@ -16,7 +17,4 @@ public class Entity_Enemy {
     public int solidAreaX, solidAreaY;
     public boolean collisionOn = false;
 
-    public Entity_Enemy(GamePanel gp) {
-        this.gp = gp;
-    }
 }
