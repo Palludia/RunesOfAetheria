@@ -13,6 +13,9 @@ public class CollisionChecker {
     public void checkCollision(Entity entity) {
         entity.collisionOn = false; // Reset collision flag
 
+        int futureX = entity.worldX;
+        int futureY = entity.worldY;
+
         // Create entity's next position bounding box
         Rectangle entityFutureBox = new Rectangle(
                 entity.worldX + entity.solidArea.x,
@@ -45,4 +48,5 @@ public class CollisionChecker {
             }
         }
     }
+
 }

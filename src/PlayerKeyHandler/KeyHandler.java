@@ -60,6 +60,7 @@ public class KeyHandler implements KeyListener {
                 case KeyEvent.VK_A -> leftPressed = true;
                 case KeyEvent.VK_D -> rightPressed = true;
                 case KeyEvent.VK_SHIFT -> shiftPressed = true;
+                case KeyEvent.VK_F1 -> gp.showDebugInfo = !gp.showDebugInfo;
             }
             isMoving = true;
         }

@@ -11,6 +11,18 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Player extends Entity {
+    public BufferedImage[] walkDown = new BufferedImage[6];
+    public BufferedImage[] walkLeft = new BufferedImage[8];
+    public BufferedImage[] walkRight = new BufferedImage[8];
+    public BufferedImage[] walkUp = new BufferedImage[8];
+    public BufferedImage[] idleDown = new BufferedImage[1];
+    public BufferedImage[] idleUp = new BufferedImage[1];
+    public BufferedImage[] idleLeft = new BufferedImage[1];
+    public BufferedImage[] idleRight = new BufferedImage[1];
+    public BufferedImage[] AttackFront = new BufferedImage[5];
+    public BufferedImage[] AttackLeft = new BufferedImage[5];
+    public BufferedImage[] AttackRight = new BufferedImage[5];
+    public BufferedImage[] AttackUp = new BufferedImage[5];
     GamePanel gamePanel;
     KeyHandler keyH;
     MouseHandler mouseH;
@@ -154,8 +166,9 @@ public class Player extends Entity {
                 spriteIndex = 0;
             }
             g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
-//            g2.setColor(Color.RED);
-//            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
+            g2.setColor(Color.RED);
+            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
+
 
     }
 
