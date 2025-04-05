@@ -4,7 +4,6 @@ import Objects.OBJ_HEART;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,16 +11,14 @@ public class Menu {
     GamePanel gp;
     private Image backgroundImage;
 
-
-    public Menu(GamePanel gp){
+    public Menu(GamePanel gp) {
         this.gp = gp;
-        try{
+        try {
             // Load the background image
             backgroundImage = ImageIO.read(new File("res/titlescreen/RunesOfAetheria.png"));
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void drawTitleScreen(Graphics2D g2) {
@@ -41,35 +38,31 @@ public class Menu {
             System.out.println("Background image not loaded!");
         }
 
+        // Load the custom font
+        try {
+            File customFontFile = new File("res/fonts/medieval-font.ttf");
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, customFontFile);
+
+            // Derive the font with the desired style and size
+            Font derivedFont = customFont.deriveFont(Font.BOLD, 40F);
+
+            // Apply the custom font
+            g2.setFont(derivedFont);
+        } catch (FontFormatException | IOException e) {
+            System.out.println("Error loading custom font: " + e.getMessage());
+            // If the custom font fails to load, use a default font
+            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40F));
+        }
+
         // Optionally, add any title text or other elements
         int screenWidth = gp.screenWidth;
         int screenHeight = gp.screenHeight;
 
-//        String text = "";
-//        g2.setColor(Color.WHITE);
-//        g2.setFont(g2.getFont().deriveFont(Font.BOLD,40F));
-//        text = "NEW GAME";
-//
-//        FontMetrics fm = g2.getFontMetrics();
-//        int textWidth = fm.stringWidth(text);
-//        int textHeight = fm.getAscent();
-//
-//        int x = (screenWidth - textWidth) / 2;
-//        int y = (screenHeight / 2) + (textHeight / 4);
-//
-//        g2.drawString(text,x,y + 55);
-//
-//        text = "SETTINGS";
-//        g2.drawString(text,x + 10,y + 110);
-//
-//        text = "QUIT";
-//        g2.drawString(text,x + 60,y + 165);
-
         g2.setColor(Color.WHITE);
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40F));
 
         String[] menuItems = { "NEW GAME", "SETTINGS", "QUIT" };
-        int menuY = (screenHeight / 2) + 50; // Starting vertical position
+        // Adjusted vertical starting position
+        int menuY = (screenHeight * 3 / 4) - 30; // Slightly higher position
         int lineSpacing = 55; // Space between lines
 
         for (int i = 0; i < menuItems.length; i++) {
@@ -84,13 +77,12 @@ public class Menu {
             int x = (screenWidth - textWidth) / 2;
             int y = menuY + (i * lineSpacing) + (textHeight / 4);
 
-            if(i == gp.commandNum) {
+            if (i == gp.commandNum) {
                 g2.drawString(">", x - 40, y);
             }
 
             g2.drawString(text, x, y);
         }
-
     }
 
     public void drawPlayScreen(Graphics2D g2) {
@@ -98,6 +90,4 @@ public class Menu {
         gp.player.draw(g2);
         gp.player.drawPlayerHeart(g2);
     }
-
-
 }
