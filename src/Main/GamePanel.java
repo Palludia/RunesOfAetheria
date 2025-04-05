@@ -1,5 +1,6 @@
 package Main;
 
+import Entity.Orc;
 import Entity.Player;
 import PlayerKeyHandler.KeyHandler;
 import PlayerKeyHandler.MouseHandler;
@@ -7,6 +8,7 @@ import Tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
     final int originalTileSize = 16;
@@ -19,9 +21,10 @@ public class GamePanel extends JPanel {
     KeyHandler keyH = new KeyHandler(this);
     MouseHandler mouseH = new MouseHandler(this);
     public Player player = new Player(this,keyH, mouseH);
-    TileManager tileManager = new TileManager(this);
+    public TileManager tileManager = new TileManager(this);
     public CollisionChecker check = new CollisionChecker(this);
     Menu menu;
+    public boolean showDebugInfo = false;
 
     //WORLD MAP SETTINGS
     public int maxWorldCol;
@@ -31,6 +34,8 @@ public class GamePanel extends JPanel {
     public final int PLAY_STATE = 1;
     public int gameState = TITLE_STATE;
     public int commandNum = 0;
+
+    public ArrayList<Orc> orcs = new ArrayList<>();
 
 
 
@@ -46,6 +51,13 @@ public class GamePanel extends JPanel {
         requestFocusInWindow();
         this.maxWorldCol = tileManager.getMapWidth();
         this.maxWorldRow = tileManager.getMapHeight();
+        spawnOrcs(5);
+    }
+
+    public void spawnOrcs(int count) {
+        for(int i = 0; i<count; i++) {
+            orcs.add(new Orc(this));
+        }
     }
 
 
@@ -69,6 +81,9 @@ public class GamePanel extends JPanel {
 
     public void updatePos() {
         player.updatePos();
+        for(Orc orc : orcs) {
+            orc.updatePos();
+        }
     }
 
     public int getTileSize() {
@@ -97,6 +112,8 @@ public class GamePanel extends JPanel {
             playMusic(0);
         }else if(this.gameState == 1){
             playMusic(1);
+
         }
     }
+
 }

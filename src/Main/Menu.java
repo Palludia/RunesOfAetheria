@@ -1,5 +1,6 @@
 package Main;
 
+import Entity.Orc;
 import Objects.OBJ_HEART;
 
 import javax.imageio.ImageIO;
@@ -78,7 +79,10 @@ public class Menu {
             int y = menuY + (i * lineSpacing) + (textHeight / 4);
 
             if (i == gp.commandNum) {
+                g2.setColor(Color.RED);
                 g2.drawString(">", x - 40, y);
+            } else{
+                g2.setColor(Color.WHITE);
             }
 
             g2.drawString(text, x, y);
@@ -87,6 +91,9 @@ public class Menu {
 
     public void drawPlayScreen(Graphics2D g2) {
         gp.tileManager.draw(g2);
+        for(Orc orc : gp.orcs) {
+            orc.draw(g2);
+        }
         gp.player.draw(g2);
         gp.player.drawPlayerHeart(g2);
     }

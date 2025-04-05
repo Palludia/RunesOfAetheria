@@ -8,18 +8,7 @@ public class Entity {
     public int worldX, worldY;
     public int speed;
 
-    public BufferedImage[] walkDown = new BufferedImage[6];
-    public BufferedImage[] walkLeft = new BufferedImage[8];
-    public BufferedImage[] walkRight = new BufferedImage[8];
-    public BufferedImage[] walkUp = new BufferedImage[8];
-    public BufferedImage[] idleDown = new BufferedImage[1];
-    public BufferedImage[] idleUp = new BufferedImage[1];
-    public BufferedImage[] idleLeft = new BufferedImage[1];
-    public BufferedImage[] idleRight = new BufferedImage[1];
-    public BufferedImage[] AttackFront = new BufferedImage[5];
-    public BufferedImage[] AttackLeft = new BufferedImage[5];
-    public BufferedImage[] AttackRight = new BufferedImage[5];
-    public BufferedImage[] AttackUp = new BufferedImage[5];
+
     public String direction;
     public String prevDirection;
 
@@ -31,4 +20,22 @@ public class Entity {
     //Character Status
     public int maxLife;
     public int life;
+
+    public boolean collidesWith(Entity other) {
+        Rectangle thisBox = new Rectangle(
+                worldX + solidArea.x,
+                worldY + solidArea.y,
+                solidArea.width,
+                solidArea.height
+        );
+
+        Rectangle otherBox = new Rectangle(
+                other.worldX + other.solidArea.x,
+                other.worldY + other.solidArea.y,
+                other.solidArea.width,
+                other.solidArea.height
+        );
+
+        return thisBox.intersects(otherBox);
+    }
 }
