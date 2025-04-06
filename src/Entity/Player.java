@@ -23,15 +23,20 @@ public class Player extends Entity {
     public BufferedImage[] AttackLeft = new BufferedImage[5];
     public BufferedImage[] AttackRight = new BufferedImage[5];
     public BufferedImage[] AttackUp = new BufferedImage[5];
+
     GamePanel gamePanel;
     KeyHandler keyH;
     MouseHandler mouseH;
+
     public int spriteIndex = 0;
     public int spriteCounter = 0;
+
     public final int characterWidth = 120;
     public final int characterHeight = 120;
+
     public final int screenX;
     public final int screenY;
+
     public BufferedImage[] image = idleDown;
     public BufferedImage heart_full, heart_blank, heart_half;
 

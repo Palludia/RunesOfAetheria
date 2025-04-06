@@ -21,6 +21,7 @@ public class Entity {
     public int maxLife;
     public int life;
 
+
     public void draw(Graphics2D g2) {
         // Default: do nothing
     }
