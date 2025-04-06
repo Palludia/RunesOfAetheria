@@ -21,6 +21,7 @@ public class Orc extends Entity {
     public int spriteIndex = 0;
     public int spriteCounter = 0;
     int drawX, drawY;
+    public boolean collision = true;
 
     // Animation control
     private     int actionCooldown = 0; // Frames until next direction change
@@ -105,6 +106,7 @@ public class Orc extends Entity {
         setAction();
         collisionOn = false;
         gp.check.checkCollision(this);
+        gp.check.checkForPlayer(this);
 
         if(!collisionOn) {
             switch (direction) {

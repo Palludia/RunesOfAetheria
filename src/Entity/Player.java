@@ -99,6 +99,8 @@ public class Player extends Entity {
             collisionOn = false;
             gamePanel.check.checkCollision(this);
 
+            gamePanel.check.checkForMonster(this);
+
             //CHECK FOR OBJECTS
             //int objIndex = gamePanel.check.checkObject(this, true);
             //pickUpObject(objIndex);
