@@ -1,5 +1,6 @@
 package Main;
 
+import Entity.Entity;
 import Entity.Orc;
 import Objects.OBJ_HEART;
 
@@ -7,6 +8,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Random;
 
 public class Menu {
     GamePanel gp;
@@ -91,10 +95,23 @@ public class Menu {
 
     public void drawPlayScreen(Graphics2D g2) {
         gp.tileManager.draw(g2);
-        for(Orc orc : gp.orcs) {
-            orc.draw(g2);
+
+//            for(Orc orc : gp.orcs) {
+//                orc.draw(g2);
+//            }
+//            gp.player.draw(g2);
+        // Combine and sort entities
+        ArrayList<Entity> entityList = new ArrayList<>();
+        entityList.add(gp.player);
+        entityList.addAll(gp.orcs);
+
+        entityList.sort(Comparator.comparingInt(e -> e.worldY));
+
+        // Draw in sorted order
+        for (Entity entity : entityList) {
+            entity.draw(g2);
         }
-        gp.player.draw(g2);
+
         gp.player.drawPlayerHeart(g2);
     }
 }

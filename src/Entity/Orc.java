@@ -41,8 +41,8 @@ public class Orc extends Entity {
 
     public void setDefaultValues() {
         // Default Orc Spawn point
-        worldX = gp.getTileSize() * 412 - (gp.getTileSize() / 2);
-        worldY = gp.getTileSize() * 728 - (gp.getTileSize() / 2);
+        worldX = gp.getTileSize() * 401 - (gp.getTileSize() / 2);
+        worldY = gp.getTileSize() * 738 - (gp.getTileSize() / 2);
 
         speed = 2; // Slightly slower speed for more control
         direction = "down"; // Start with a default direction

@@ -60,8 +60,8 @@ public class Player extends Entity {
 
     public void setDefaultValues() {
         //Default player Spawn point
-        worldX = gamePanel.getTileSize() * 399 - (gamePanel.getTileSize() / 2);
-        worldY = gamePanel.getTileSize() * 728 - (gamePanel.getTileSize() / 2);
+        worldX = gamePanel.getTileSize() * 400 - (gamePanel.getTileSize() / 2);
+        worldY = gamePanel.getTileSize() * 730 - (gamePanel.getTileSize() / 2);
 
         speed = 4;
         direction = "idle";
