@@ -110,6 +110,7 @@ public class GamePanel extends JPanel {
         stopMusic();
         if(this.gameState == 0) {
             playMusic(0);
+            stopMusic();
         }else if(this.gameState == 1){
             playMusic(1);
 

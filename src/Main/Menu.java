@@ -95,12 +95,6 @@ public class Menu {
 
     public void drawPlayScreen(Graphics2D g2) {
         gp.tileManager.draw(g2);
-
-//            for(Orc orc : gp.orcs) {
-//                orc.draw(g2);
-//            }
-//            gp.player.draw(g2);
-        // Combine and sort entities
         ArrayList<Entity> entityList = new ArrayList<>();
         entityList.add(gp.player);
         entityList.addAll(gp.orcs);
