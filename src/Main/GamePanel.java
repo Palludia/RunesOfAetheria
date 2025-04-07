@@ -51,7 +51,7 @@ public class GamePanel extends JPanel {
         requestFocusInWindow();
         this.maxWorldCol = tileManager.getMapWidth();
         this.maxWorldRow = tileManager.getMapHeight();
-        spawnOrcs(5);
+        spawnOrcs(1);
     }
 
     public void spawnOrcs(int count) {

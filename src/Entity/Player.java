@@ -7,6 +7,7 @@ import PlayerKeyHandler.MouseHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -40,6 +41,11 @@ public class Player extends Entity {
     public BufferedImage[] image = idleDown;
     public BufferedImage heart_full, heart_blank, heart_half;
 
+    //Aggro Range
+    public Ellipse2D.Double aggroRange;
+    int radius = 200;
+    int diameter = radius * 2;
+
     public Player(GamePanel gamePanel, KeyHandler keyH, MouseHandler mouseH) {
         this.gamePanel = gamePanel;
         this.keyH = keyH;
@@ -54,6 +60,16 @@ public class Player extends Entity {
 
         solidAreaX = solidArea.x;
         solidAreaY = solidArea.y;
+
+        //Aggro Settings
+        double centerX = worldX + solidArea.x + solidArea.width / 2.0;
+        double centerY = worldY + solidArea.y + solidArea.height / 2.0;
+        aggroRange = new Ellipse2D.Double(
+            centerX - radius,
+            centerY - radius,
+            diameter,
+            diameter
+        );
 
         setDefaultValues();
         getPlayerImage();
@@ -106,9 +122,11 @@ public class Player extends Entity {
 
             gamePanel.check.checkForMonster(this);
 
-            //CHECK FOR OBJECTS
-            //int objIndex = gamePanel.check.checkObject(this, true);
-            //pickUpObject(objIndex);
+            //Check for Monster in the vicinity
+            for(Orc m : gamePanel.orcs){
+                m.setAggro(aggroRange.contains(m.worldX + m.solidArea.x + m.solidArea.width / 2.0, m.worldY + m.solidArea.y + m.solidArea.height / 2.0));
+            }
+
 
             //IF COLLISION IS "ON" PLAYER CAN'T MOVE
             if (!collisionOn) {
@@ -172,12 +190,27 @@ public class Player extends Entity {
             if(spriteIndex >= image.length){
                 spriteIndex = 0;
             }
+            updateAggroCircle();
             g2.drawImage(image[spriteIndex],screenX,screenY,characterWidth,characterHeight,null);
-            g2.setColor(Color.RED);
-            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
+//            g2.setColor(Color.RED);
+//            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
+            double screenX = aggroRange.getX() - gamePanel.player.worldX + gamePanel.player.screenX;
+            double screenY = aggroRange.getY() - gamePanel.player.worldY + gamePanel.player.screenY;
+
+            g2.setColor(new Color(255, 0, 0)); // translucent red
+            g2.drawOval((int) screenX, (int) screenY,
+                    (int) aggroRange.getWidth(), (int) aggroRange.getHeight());
 
 
     }
+    public void updateAggroCircle() {
+        double centerX = worldX + solidArea.x + solidArea.width / 2.0;
+        double centerY = worldY + solidArea.y + solidArea.height / 2.0;
+
+        // Set the ellipse to be centered around the player's center point
+        aggroRange.setFrame(centerX - radius, centerY - radius, diameter, diameter);
+    }
+
 
     public void drawPlayerHeart(Graphics2D g2) {
         int x = gamePanel.getTileSize() / 2;

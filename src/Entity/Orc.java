@@ -25,20 +25,15 @@ public class Orc extends Entity {
     int drawX, drawY;
     public boolean collision = true;
     public String diagonalMovement;
+    public boolean aggro = false;
 
     // Animation control
     private int actionCooldown = 0; // Frames until next direction change
 
-    //Monster Aggro Range
-    public Ellipse2D.Double aggroRange;
-    int radius = 200; // example radius
-    int diameter = radius * 2;
-    int centering = 22;
 
 
     public Orc(GamePanel gp) {
         this.gp = gp;
-        aggroRange = new Ellipse2D.Double();
 
         solidArea = new Rectangle(45, 75, 30, 20);
         solidAreaX = solidArea.x;
@@ -90,17 +85,7 @@ public class Orc extends Entity {
         // Debug hitbox (optional)
         g2.drawImage(currentAnimation[spriteIndex],drawX,drawY,characterWidth,characterHeight,null);
         g2.setColor(Color.RED);
-
-        // Draw aggro circle (for debugging or visualization)
-        int screenX = worldX - gp.player.worldX + gp.player.screenX;
-        int screenY = worldY - gp.player.worldY + gp.player.screenY;
-
-        aggroRange.setFrame(((screenX - radius + (double)gp.getTileSize()/2) + (double)characterWidth/2)-centering, ((screenY - radius + (double)gp.getTileSize()/2) + (double)characterWidth/2.0)-centering, diameter, diameter);
-
-        g2.setColor(new Color(255, 0, 0));
-        g2.drawOval(((screenX - radius + gp.getTileSize()/2) + characterWidth/2)-centering, ((screenY - radius + gp.getTileSize()/2) + characterHeight/2)-centering, diameter, diameter);
-
-//      g2.drawRect(drawX + solidAreaX, drawY + solidAreaY, solidArea.width , solidArea.height );
+        g2.drawRect(drawX + solidAreaX, drawY + solidAreaY, solidArea.width , solidArea.height );
 
     }
 
@@ -141,20 +126,20 @@ public class Orc extends Entity {
         gp.check.checkForPlayer(this);
 
         if(!collisionOn) {
-            if(aggroRange.contains(gp.player.solidAreaX, gp.player.solidArea.y)){
-                if(this.worldX < gp.player.worldX){
-                    this.worldX += speed;
+            if(aggro){
+                if(worldX < gp.player.worldX){
+                    worldX += speed;
                 }
-                if(this.worldX > gp.player.worldX){
-                    this.worldX -= speed;
+                if(worldX > gp.player.worldX){
+                    worldX -= speed;
                 }
-                if(this.worldY < gp.player.worldY){
-                    this.worldY += speed;
+                if(worldY < gp.player.worldY){
+                    worldY += speed;
                 }
-                if(this.worldY > gp.player.worldY){
-                    this.worldY -= speed;
+                if(worldY > gp.player.worldY){
+                    worldY -= speed;
                 }System.out.println("Orc : Player in range");
-            }else{
+            }else {
                 switch (direction) {
                     case "up" -> worldY -= speed;
                     case "down" -> worldY += speed;
@@ -162,11 +147,13 @@ public class Orc extends Entity {
                     case "right" -> worldX += speed;
                 }
             }
-
         }else {
-
             setAction();
         }
+    }
+
+    public void setAggro(boolean aggro){
+        this.aggro = aggro;
     }
 
     public void getOrcImage() {
