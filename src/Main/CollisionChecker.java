@@ -139,4 +139,18 @@ public class CollisionChecker {
         }
     }
 
+    public boolean isTileBlocked(int col, int row) {
+        int tileSize = gp.getTileSize();
+        Rectangle tileBox = new Rectangle(col * tileSize, row * tileSize, tileSize, tileSize);
+
+        for (Rectangle box : gp.tileManager.collisionBoxes) {
+            if (tileBox.intersects(box)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
 }

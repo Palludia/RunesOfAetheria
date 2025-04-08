@@ -53,17 +53,31 @@ public class KeyHandler implements KeyListener {
             }
         }
 
-        if(gp.gameState == gp.PLAY_STATE) {
-            switch(code) {
-                case KeyEvent.VK_W -> upPressed = true;
-                case KeyEvent.VK_S -> downPressed = true;
-                case KeyEvent.VK_A -> leftPressed = true;
-                case KeyEvent.VK_D -> rightPressed = true;
-                case KeyEvent.VK_SHIFT -> shiftPressed = true;
-                case KeyEvent.VK_F1 -> gp.showDebugInfo = !gp.showDebugInfo;
+        else if (gp.gameState == gp.PLAY_STATE) {
+            // Movement keys
+            if (code == KeyEvent.VK_W) { upPressed = true; }
+            if (code == KeyEvent.VK_S) { downPressed = true; }
+            if (code == KeyEvent.VK_A) { leftPressed = true; }
+            if (code == KeyEvent.VK_D) { rightPressed = true; }
+
+            // Pause Key
+            if (code == KeyEvent.VK_P) {
+                gp.setGameState(gp.PAUSE_STATE); // Switch to Pause State
             }
-            isMoving = true;
+            // Debug Key Example
+            if (code == KeyEvent.VK_T) {
+                gp.showDebugInfo = !gp.showDebugInfo; // Toggle debug info
+            }
         }
+        // --- PAUSE STATE ---
+        else if (gp.gameState == gp.PAUSE_STATE) {
+            // Unpause Key
+            if (code == KeyEvent.VK_P) {
+                gp.setGameState(gp.PLAY_STATE); // Switch back to Play State
+            }
+            // Add other pause menu controls here if needed (e.g., Enter to select Quit)
+        }
+
 
     }
 
