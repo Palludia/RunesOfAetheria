@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 public class Player extends Entity {
@@ -201,7 +202,6 @@ public class Player extends Entity {
             g2.drawOval((int) screenX, (int) screenY,
                     (int) aggroRange.getWidth(), (int) aggroRange.getHeight());
 
-
     }
     public void updateAggroCircle() {
         double centerX = worldX + solidArea.x + solidArea.width / 2.0;
@@ -239,6 +239,26 @@ public class Player extends Entity {
         if (halfHearts > 0) {
             g2.drawImage(heart_half, x, y, null);
         }
+    }
+
+    public void drawPlayerHP(Graphics2D g2) {
+        try {
+            File customFontFile = new File("res/fonts/medieval-font.ttf");
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, customFontFile);
+
+            // Derive the font with the desired style and size
+            Font derivedFont = customFont.deriveFont(Font.BOLD, 20F);
+
+            // Apply the custom font
+            g2.setFont(derivedFont);
+        } catch (FontFormatException | IOException e) {
+            System.out.println("Error loading custom font: " + e.getMessage());
+            // If the custom font fails to load, use a default font
+            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20F));
+        }
+
+        g2.setColor(Color.WHITE);
+        g2.drawString(String.format("HP %d / %d",life,maxLife), screenX + 20, screenY);
     }
 
     public void getPlayerImage() {

@@ -32,6 +32,7 @@ public class GamePanel extends JPanel {
 
     public final int TITLE_STATE = 0;
     public final int PLAY_STATE = 1;
+    public final int PAUSE_STATE = 2;
     public int gameState = TITLE_STATE;
     public int commandNum = 0;
 
@@ -69,8 +70,15 @@ public class GamePanel extends JPanel {
 
         if(gameState == TITLE_STATE) {
             menu.drawTitleScreen(g2);
-        }else if(gameState == PLAY_STATE) {
-           menu.drawPlayScreen(g2);
+        }else {
+            // Draw the main game elements (Tiles, Player, NPCs)
+            // These should be drawn whether playing or paused so the player sees the context
+            menu.drawPlayScreen(g2); // Assuming this method draws tiles, player, NPCs
+
+            // If Paused, draw the pause overlay ON TOP of the game screen
+            if (gameState == PAUSE_STATE) {
+                menu.drawPauseScreen(g2); // We'll add this method to the Menu class
+            }
         }
 
 //        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -81,8 +89,14 @@ public class GamePanel extends JPanel {
 
     public void updatePos() {
         player.updatePos();
+        if(gameState == PAUSE_STATE) {
+            stopMusic();
+            return;
+        }
         for(Orc orc : orcs) {
-            orc.updatePos();
+            if(orc != null) {
+                orc.updatePos();
+            }
         }
     }
 

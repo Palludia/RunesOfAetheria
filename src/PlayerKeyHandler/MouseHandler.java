@@ -22,11 +22,14 @@ public class MouseHandler implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(!isAttacking && e.getButton() == MouseEvent.BUTTON1) {
-            isAttacking = true;
-            System.out.println("I AM ATTACKING");
-            gp.playSE(2);
+        if(gp.gameState == gp.PLAY_STATE) {
+            if(!isAttacking && e.getButton() == MouseEvent.BUTTON1) {
+                isAttacking = true;
+                System.out.println("I AM ATTACKING");
+                gp.playSE(2);
+            }
         }
+
     }
 
     @Override

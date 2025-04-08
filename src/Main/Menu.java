@@ -15,15 +15,19 @@ import java.util.Random;
 public class Menu {
     GamePanel gp;
     private Image backgroundImage;
+    Font arial_40, arial_80_bold;
 
     public Menu(GamePanel gp) {
         this.gp = gp;
+
         try {
             // Load the background image
             backgroundImage = ImageIO.read(new File("res/titlescreen/RunesOfAetheria.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        arial_40 = new Font("Arial", Font.PLAIN, 40);
+        arial_80_bold = new Font("Arial", Font.BOLD, 80);
     }
 
     public void drawTitleScreen(Graphics2D g2) {
@@ -107,5 +111,44 @@ public class Menu {
         }
 
         gp.player.drawPlayerHeart(g2);
+        gp.player.drawPlayerHP(g2);
+    }
+
+    public void drawPauseScreen(Graphics2D g2) {
+        // 1. Optional: Draw a semi-transparent overlay to dim the background
+        g2.setColor(new Color(0, 0, 0, 150)); // Black with ~60% opacity (alpha 150/255)
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        // 2. Draw the "PAUSED" text
+        g2.setFont(arial_80_bold); // Use a large font
+        g2.setColor(Color.WHITE); // White or a contrasting color
+
+        String text = "PAUSED";
+        int x = getXforCenteredText(text, g2);
+        int y = gp.screenHeight / 2; // Center vertically
+
+        g2.drawString(text, x, y);
+
+        // 3. Optional: Add instructions or other menu items
+        g2.setFont(arial_40);
+        String resumeText = "Press P to Resume";
+        x = getXforCenteredText(resumeText, g2);
+        y += gp.tileSize * 2; // Position below "PAUSED"
+        g2.drawString(resumeText, x, y);
+
+        // Example: Add a "Quit to Title" option (requires more KeyHandler logic)
+         /*
+         String quitText = "Press ESC for Title Menu";
+         x = getXforCenteredText(quitText, g2);
+         y += gp.tileSize * 1.5;
+         g2.drawString(quitText, x, y);
+         */
+    }
+
+    // Helper method to get X coordinate for centered text
+    public int getXforCenteredText(String text, Graphics2D g2) {
+        FontMetrics fm = g2.getFontMetrics();
+        int length = fm.stringWidth(text);
+        return gp.screenWidth / 2 - length / 2;
     }
 }
