@@ -101,6 +101,7 @@ public class Menu {
         ArrayList<Entity> entityList = new ArrayList<>();
         entityList.add(gp.player);
         entityList.addAll(gp.orcs);
+        entityList.add(gp.BOD);
 
         entityList.sort(Comparator.comparingInt(e -> e.worldY));
 

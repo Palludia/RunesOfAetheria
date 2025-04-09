@@ -5,7 +5,6 @@ import Main.GamePanel;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-// import java.io.File; // Only needed if loading font via File path, prefer resource stream
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -13,31 +12,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Represents an Orc enemy in the game.
- * Handles its movement, AI (random wandering, aggro, attacking),
- * animation, drawing, and health management. Uses an improved
- * collision response mechanism to navigate obstacles when blocked.
- */
-public class Orc extends Entity {
-
+public class BringerOfDeath extends Entity{
     // --- References & Utilities ---
     GamePanel gp;
     Random rndDirection = new Random();
 
-    // --- Animation & Drawing ---
-    BufferedImage[] walkDown = new BufferedImage[6];
-    BufferedImage[] walkUp = new BufferedImage[6];
-    BufferedImage[] walkLeft = new BufferedImage[6];
-    BufferedImage[] walkRight = new BufferedImage[6];
-    BufferedImage[] attackDown = new BufferedImage[7]; // Attack animations
-    BufferedImage[] attackUp = new BufferedImage[7];
-    BufferedImage[] attackLeft = new BufferedImage[7];
-    BufferedImage[] attackRight = new BufferedImage[7];
+    public BufferedImage[] walkLeft = new BufferedImage[8];
+    public BufferedImage[] walkRight = new BufferedImage[8];
+    public BufferedImage[] attackLeft = new BufferedImage[10];
+    public BufferedImage[] attackRight = new BufferedImage[10];
 
-
-    private int characterWidth = 90;  // Drawing width
-    private int characterHeight = 90; // Drawing height
+    private int characterWidth = 280 * 5;  // Drawing width
+    private int characterHeight = 85 * 5; // Drawing height
     public int spriteIndex = 0;        // Current frame index for walk/idle
     public int spriteCounter = 0;      // Timer for walk/idle animation speed
     private int attackSpriteIndex = 0;    // Current frame index for attack
@@ -45,7 +31,7 @@ public class Orc extends Entity {
 
     private static final int WALK_ANIMATION_DELAY = 8; // Frames between walk/idle frame changes
     private static final int ATTACK_ANIMATION_DELAY = 6; // Frames between attack frame changes
-    private Font orcHpFont;            // Pre-loaded font for HP display
+    private Font BODHpFont;            // Pre-loaded font for HP display
 
     // --- State & AI ---
     public boolean collision = true; // Causes movement collision?
@@ -67,7 +53,7 @@ public class Orc extends Entity {
      *
      * @param gp The main GamePanel instance.
      */
-    public Orc(GamePanel gp) {
+    public BringerOfDeath(GamePanel gp) {
         this.gp = gp;
 
         // Define the collision area relative to the Orc's top-left corner (0,0)
@@ -80,28 +66,24 @@ public class Orc extends Entity {
 
         loadFont();         // Load custom font for HP display
         setDefaultValues(); // Set initial position, speed, health, etc.
-        getOrcImage();      // Load animation sprites
+        getBODImage();      // Load animation sprites
     }
 
-    /**
-     * Sets the default starting values for the Orc when created or reset.
-     */
     public void setDefaultValues() {
-        // Set Orc Spawn point (adjust coordinates as needed)
-        worldX = gp.getTileSize() * 172 - (gp.getTileSize() / 2);
-        worldY = gp.getTileSize() * 149 - (gp.getTileSize() / 2);
+        worldX = gp.getTileSize() * 180 - (gp.getTileSize() / 2);
+        worldY = gp.getTileSize() * 104 - (gp.getTileSize() / 2);
 
-        speed = 1;           // Orc movement speed
-        direction = "down";  // Initial facing direction
+        speed = 2;           // Orc movement speed
+        direction = "left";  // Initial facing direction
 
         // Orc Status
-        maxLife = 50;        // Maximum health points
+        maxLife = 1500;        // Maximum health points
         life = maxLife;      // Start with full health
         alive = true;        // Start alive
         collision = true;    // Start as a solid entity that blocks movement
         aggro = false;       // Start non-aggressive
         attacking = false;   // Start not attacking
-        attackPower = 20;   // Attack Power
+        attackPower = 164;   // Attack Power
 
         // Reset timers and animation state
         actionCooldown = 0;
@@ -113,11 +95,6 @@ public class Orc extends Entity {
         attackSpriteCounter = 0;
     }
 
-    /**
-     * Main update logic for the Orc. Called once per frame from GamePanel.
-     * Handles AI decision-making, collision detection, movement, attacking,
-     * and animation timing.
-     */
     public void update() {
         // Ignore updates if game not playing or Orc is dead
         if (gp.gameState != gp.NEWGAME_STATE && gp.gameState != gp.LOADGAME_STATE || !alive) {
@@ -202,9 +179,6 @@ public class Orc extends Entity {
 
     } // End update()
 
-    /**
-     * Initiates the Orc's attack sequence: sets state, cooldown, and determines facing direction.
-     */
     private void startAttack() {
         // Double-check conditions just in case
         if (!alive || attacking || attackCooldown > 0) {
@@ -236,10 +210,6 @@ public class Orc extends Entity {
         // TODO: Play attack sound effect? e.g., gp.playSoundEffect(...)
     }
 
-    /**
-     * Manages the active attack animation timing and triggers hit detection
-     * during the appropriate frames. Called only when `attacking` is true.
-     */
     private void handleAttackSequence() {
         // Update attack animation timer
         attackSpriteCounter++;
@@ -258,11 +228,9 @@ public class Orc extends Entity {
 
             // --- Determine which attack animation array to use ---
             BufferedImage[] currentAttackAnim = switch (attackDirection) {
-                case "up":    yield attackUp; // Using yield for switch expression
-                case "down":  yield attackDown;
                 case "left":  yield attackLeft;
                 case "right": yield attackRight;
-                default:      yield attackDown; // Fallback
+                default:      yield attackLeft; // Fallback
             };
 
             // --- Check if Animation Has Finished ---
@@ -281,11 +249,6 @@ public class Orc extends Entity {
         spriteIndex = attackSpriteIndex;
     }
 
-    /**
-     * Calculates the Orc's attack hitbox position based on its current state
-     * and checks if it intersects with the player's solid area. Applies damage if it hits.
-     * Called only during specific frames defined in `handleAttackSequence`.
-     */
     private void performAttackHitCheck() {
         // Only allow one successful hit per attack swing/animation cycle
         if (hitPlayerThisSwing || gp.player == null) {
@@ -353,18 +316,8 @@ public class Orc extends Entity {
 
     }
 
-    /**
-     * Moves the Orc one step based on its current `direction` field.
-     * Assumes the path is already checked and clear.
-     */
     private void moveNormally() {
         switch (direction) {
-            case "up":
-                worldY -= speed;
-                break;
-            case "down":
-                worldY += speed;
-                break;
             case "left":
                 worldX -= speed;
                 break;
@@ -374,10 +327,6 @@ public class Orc extends Entity {
         }
     }
 
-    /**
-     * Handles collision response when the Orc's primary intended movement path is blocked.
-     * Tries to move perpendicularly; if still blocked, picks a random direction and waits.
-     */
     private void handleMovementCollision() {
         String[] perpendicular = getPerpendicularDirections(direction);
 
@@ -468,32 +417,22 @@ public class Orc extends Entity {
      * @return String array with the two perpendicular directions.
      */
     private String[] getPerpendicularDirections(String currentDir) {
-        switch (currentDir) {
-            case "up":
-            case "down":
-                return new String[]{"left", "right"};
-            case "left":
-            case "right":
-                return new String[]{"up", "down"};
-            default: // Should not happen with valid direction
-                return new String[]{"left", "right"};
+        // If the monster only moves left and right, it should not check up/down directions.
+        if ("left".equals(currentDir) || "right".equals(currentDir)) {
+            return new String[]{"left", "right"}; // Only check left and right
         }
+        // For up/down or other invalid directions, you can default to left-right
+        return new String[]{"left", "right"};
     }
 
-    /**
-     * Handles the response when the Orc is blocked in its primary direction
-     * AND both perpendicular directions. Picks a new random direction and waits.
-     */
     private void handleBlockedResponse() {
         String previousDirection = direction;
         int attempts = 0;
-        // Try up to 10 times to pick a *different* random direction
+
+        // Try up to 10 times to pick a *different* random direction (left or right)
         do {
-            int i = rndDirection.nextInt(100); // Random number 0-99
-            if (i < 25) { direction = "up"; }
-            else if (i < 50) { direction = "down"; }
-            else if (i < 75) { direction = "left"; }
-            else { direction = "right"; }
+            int i = rndDirection.nextInt(2); // Random number 0 or 1
+            direction = (i == 0) ? "left" : "right"; // 0 = left, 1 = right
             attempts++;
         } while (direction.equals(previousDirection) && attempts < 10);
 
@@ -507,25 +446,14 @@ public class Orc extends Entity {
      */
     // If overriding a method from Entity (good practice)
     public void setAction() {
-        // Increment cooldown timer only when not aggro (handled in update)
-        // actionCooldown++; // Moved timer update to main update method
-
         // Check if it's time to change direction
         if (actionCooldown >= ACTION_INTERVAL) {
-            int i = rndDirection.nextInt(100); // 0-99
-            if (i < 25) { direction = "up"; }
-            else if (i < 50) { direction = "down"; }
-            else if (i < 75) { direction = "left"; }
-            else { direction = "right"; }
+            int i = rndDirection.nextInt(2); // Random number 0 or 1
+            direction = (i == 0) ? "left" : "right"; // 0 = left, 1 = right
             actionCooldown = 0; // Reset timer
         }
     }
 
-    /**
-     * Updates the sprite index for walk/idle animation based on ANIMATION_DELAY.
-     * Ensures the index loops correctly for the current animation array.
-     * This is NOT used when the Orc is attacking.
-     */
     private void updateWalkIdleAnimation() {
         // Only update walk/idle animation if NOT attacking
         if (attacking) {
@@ -539,11 +467,9 @@ public class Orc extends Entity {
 
             // Determine the current walk/idle animation array based on direction
             BufferedImage[] anim = switch (direction) {
-                case "up":    yield walkUp;
                 case "left":  yield walkLeft;
-                case "down":  yield walkDown;
                 case "right": yield walkRight;
-                default:      yield walkDown; // Fallback
+                default:      yield walkLeft; // Fallback
             };
 
             // Check for null and loop the index
@@ -557,14 +483,6 @@ public class Orc extends Entity {
         }
     }
 
-
-    /**
-     * Draws the Orc sprite, HP bar, and optional debug visuals.
-     * Selects the correct animation (walk/idle or attack) based on state.
-     *
-     * @param g2 The Graphics2D context to draw on.
-     */
-    @Override
     public void draw(Graphics2D g2) {
         // Don't draw if dead (add check for death animation later if needed)
         if (!alive) {
@@ -575,7 +493,6 @@ public class Orc extends Entity {
         int screenX = worldX - gp.player.worldX + gp.player.screenX;
         int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-        // Optimization: Only draw if Orc is roughly within screen bounds
         if (worldX + gp.getTileSize() > gp.player.worldX - gp.player.screenX &&
                 worldX - gp.getTileSize() < gp.player.worldX + gp.player.screenX &&
                 worldY + gp.getTileSize() > gp.player.worldY - gp.player.screenY &&
@@ -588,22 +505,18 @@ public class Orc extends Entity {
             if (attacking) {
                 // Use attack animation set based on the stored attackDirection
                 currentAnimationSet = switch (attackDirection) {
-                    case "up":    yield attackUp;
-                    case "down":  yield attackDown;
                     case "left":  yield attackLeft;
                     case "right": yield attackRight;
-                    default:      yield attackDown; // Fallback
+                    default:      yield attackLeft; // Fallback
                 };
                 // Use the dedicated attack sprite index
                 currentSpriteIndex = attackSpriteIndex;
             } else {
                 // Use walk/idle animation set based on the current facing direction
                 currentAnimationSet = switch (direction) {
-                    case "up":    yield walkUp;
                     case "left":  yield walkLeft;
-                    case "down":  yield walkDown;
                     case "right": yield walkRight;
-                    default:      yield walkDown; // Fallback
+                    default:      yield walkLeft; // Fallback
                 };
                 // Use the walk/idle sprite index
                 currentSpriteIndex = spriteIndex;
@@ -649,7 +562,6 @@ public class Orc extends Entity {
         } // End on-screen check
     } // End draw()
 
-
     /**
      * Helper method to draw the Orc's HP bar above its head.
      * @param g2 Graphics context.
@@ -661,8 +573,8 @@ public class Orc extends Entity {
         // if (life == maxLife) return;
 
         // Set font (use preloaded or fallback)
-        if (orcHpFont != null) {
-            g2.setFont(orcHpFont);
+        if (BODHpFont != null) {
+            g2.setFont(BODHpFont);
         } else {
             g2.setFont(new Font("Arial", Font.BOLD, 16)); // Fallback
         }
@@ -690,31 +602,22 @@ public class Orc extends Entity {
         // g2.drawRect(hpBarX, hpBarY, hpBarFullWidth, hpBarHeight);
     }
 
-
-    /**
-     * Loads Orc animation images from resource stream.
-     * Handles potential errors during loading.
-     */
-    public void getOrcImage() {
+    public void getBODImage() {
         // System.out.println("Loading Orc images..."); // Debug message
         try {
             // Define the base path for Orc images within your resources folder
-            String basePath = "/Entities/Enemies/Orcs/"; // Make sure this path is correct!
+            String basePath = "/Entities/Enemies/BringerOfDeath/Sprites/"; // Make sure this path is correct!
 
             // Load Walk Animations (assuming 6 frames)
-            for (int i = 0; i < 6; i++) {
-                walkDown[i] = loadImage(basePath + "Walk(Down)/" + (i + 1) + ".png");
-                walkLeft[i] = loadImage(basePath + "Walk(Left)/" + (i + 1) + ".png");
-                walkRight[i] = loadImage(basePath + "Walk(Right)/" + (i + 1) + ".png");
-                walkUp[i] = loadImage(basePath + "Walk(Up)/" + (i + 1) + ".png");
+            for (int i = 0; i < 8; i++) {
+                walkLeft[i] = loadImage(basePath + "Walk/Left/" + "Left_" + (i+1) + ".png");
+                walkRight[i] = loadImage(basePath + "Walk/Right/" + "Right_" + (i+1) + ".png");
             }
 
             // Load Attack Animations (assuming 7 frames)
-            for (int i = 0; i < 7; i++) {
-                attackDown[i] = loadImage(basePath + "Attack(Down)/" + (i + 1) + ".png");
-                attackLeft[i] = loadImage(basePath + "Attack(Left)/" + (i + 1) + ".png");
-                attackRight[i] = loadImage(basePath + "Attack(Right)/" + (i + 1) + ".png");
-                attackUp[i] = loadImage(basePath + "Attack(Up)/" + (i + 1) + ".png");
+            for (int i = 0; i < 10; i++) {
+                attackLeft[i] = loadImage(basePath + "Attack/Left/" + "Left_" + (i+1) + ".png");
+                attackRight[i] = loadImage(basePath + "Attack/Right/" + "Right_" + (i+1) + ".png");
             }
 
             // System.out.println("Orc images loaded successfully."); // Debug success message
@@ -724,14 +627,6 @@ public class Orc extends Entity {
         }
     }
 
-    /**
-     * Helper method to load a single image from the resource path.
-     *
-     * @param path The resource path (e.g., "/Entities/Enemies/Orcs/Walk(Down)/1.png").
-     * @return The loaded BufferedImage.
-     * @throws IOException If reading the image fails or stream closing fails.
-     * @throws NullPointerException If the resource path is invalid or not found.
-     */
     private BufferedImage loadImage(String path) throws IOException, NullPointerException {
         InputStream stream = getClass().getResourceAsStream(path);
         if (stream == null) {
@@ -755,10 +650,6 @@ public class Orc extends Entity {
         return img;
     }
 
-    /**
-     * Loads and prepares the custom font used for drawing Orc HP.
-     * Uses a fallback font if loading fails.
-     */
     private void loadFont() {
         InputStream fontStream = null; // Declare outside try for finally block
         try {
@@ -770,13 +661,13 @@ public class Orc extends Entity {
             }
             // Create font from stream and derive desired size/style
             Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
-            orcHpFont = customFont.deriveFont(Font.BOLD, 16F); // Set size and style
+            BODHpFont = customFont.deriveFont(Font.BOLD, 16F); // Set size and style
             // System.out.println("Custom font loaded successfully."); // Debug
 
         } catch (FontFormatException | IOException e) {
             System.err.println("Error loading custom font for Orc HP: " + e.getMessage() + ". Using default.");
             // Use a standard system font as a fallback
-            orcHpFont = new Font("Arial", Font.BOLD, 16);
+            BODHpFont = new Font("Arial", Font.BOLD, 16);
             e.printStackTrace(); // Print error details
         } finally {
             // Ensure the stream is closed
@@ -790,15 +681,10 @@ public class Orc extends Entity {
         }
     }
 
-    /**
-     * Reduces Orc's health and handles death transition.
-     *
-     * @param attackPower The amount of damage to inflict.
-     */
     @Override
-    public void takeDamage(int attackPower) {
+    protected void takeDamage(int attackPower) {
         if (!alive) {
-            return; // Cannot damage a dead Orc
+            return; // Cannot damage a dead Boss
         }
         life -= attackPower;
         gp.playSE(5);
@@ -809,11 +695,6 @@ public class Orc extends Entity {
             die();    // Trigger the death sequence
         }
     }
-
-    /**
-     * Handles the Orc's death state transition.
-     * Marks the Orc as not alive and not solid. Triggers death effects.
-     */
     @Override
     protected void die() {
         if (!alive) {
@@ -829,9 +710,9 @@ public class Orc extends Entity {
     }
 
     /**
-     * Sets the Orc's aggression state.
+     * Sets the Boss's aggression state.
      *
-     * @param aggro true to make the Orc aggressive, false otherwise.
+     * @param aggro true to make the Boss aggressive, false otherwise.
      */
     public void setAggro(boolean aggro) {
         if (this.aggro != aggro) { // Only print/change if state actually changes
@@ -845,13 +726,6 @@ public class Orc extends Entity {
         }
     }
 
-    /**
-     * Checks if there is an unobstructed line of sight between the Orc and the Player.
-     * Uses simple step-based raycasting against solid tiles.
-     * Requires gp.check.isTileBlocked(col, row) to be implemented in CollisionChecker.
-     *
-     * @return true if line of sight is clear, false otherwise.
-     */
     private boolean canSeePlayer() {
         // Basic checks
         if (gp.player == null) return false;
@@ -859,14 +733,14 @@ public class Orc extends Entity {
         if (tileSize <= 0) return false; // Avoid division by zero
 
         // Use center points of solid areas for more accuracy
-        int orcCenterX = worldX + solidArea.x + solidArea.width / 2;
-        int orcCenterY = worldY + solidArea.y + solidArea.height / 2;
+        int BODCenterX = worldX + solidArea.x + solidArea.width / 2;
+        int BODCenterY = worldY + solidArea.y + solidArea.height / 2;
         int playerCenterX = gp.player.worldX + gp.player.solidArea.x + gp.player.solidArea.width / 2;
         int playerCenterY = gp.player.worldY + gp.player.solidArea.y + gp.player.solidArea.height / 2;
 
         // Vector and distance
-        double dx = playerCenterX - orcCenterX;
-        double dy = playerCenterY - orcCenterY;
+        double dx = playerCenterX - BODCenterX;
+        double dy = playerCenterY - BODCenterY;
         double distance = Math.hypot(dx, dy);
 
         // If very close, consider visible
@@ -879,8 +753,8 @@ public class Orc extends Entity {
         dy /= distance;
 
         // Step along the line checking tiles
-        double currentX = orcCenterX;
-        double currentY = orcCenterY;
+        double currentX = BODCenterX;
+        double currentY = BODCenterY;
         // Check one step less than the full distance to avoid checking the player's own tile? Or check full distance. Let's check full.
         int steps = (int) Math.round(distance);
 
@@ -915,4 +789,4 @@ public class Orc extends Entity {
     public void reset() {
         setDefaultValues();
     }
-} // End of Orc class
+}

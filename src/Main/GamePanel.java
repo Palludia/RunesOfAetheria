@@ -1,5 +1,6 @@
 package Main;
 
+import Entity.BringerOfDeath;
 import Entity.Orc;
 import Entity.Player;
 import PlayerKeyHandler.KeyHandler;
@@ -7,6 +8,7 @@ import PlayerKeyHandler.MouseHandler;
 import Tile.TileManager;
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
@@ -47,6 +49,7 @@ public class GamePanel extends JPanel {
     public boolean newGameSelected = false;
 
     public ArrayList<Orc> orcs = new ArrayList<>();
+    public BringerOfDeath BOD;
 
     public GamePanel() {
         menu = new Menu(this);
@@ -61,7 +64,8 @@ public class GamePanel extends JPanel {
         this.maxWorldCol = tileManager.getMapWidth();
         this.maxWorldRow = tileManager.getMapHeight();
         setGameState(TITLE_STATE);
-        spawnOrcs(1);
+        spawnOrcs(10);
+        spawnBOD();
         setMoving(true);
         previousState = -1;
     }
@@ -70,6 +74,11 @@ public class GamePanel extends JPanel {
         for (int i = 0; i < count; i++) {
             orcs.add(new Orc(this));
         }
+    }
+
+    public void spawnBOD() {
+        BOD = new BringerOfDeath(this);
+        BOD.collision = true;
     }
 
     @Override
