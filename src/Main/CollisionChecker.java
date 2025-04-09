@@ -152,5 +152,4 @@ public class CollisionChecker {
         return false;
     }
 
-
 }
