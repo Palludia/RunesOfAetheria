@@ -3,10 +3,10 @@ package Entity;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Entity {
+public abstract class Entity {
 
     public int worldX, worldY;
-    public int speed;
+    public double speed;
 
 
     public String direction;
@@ -14,12 +14,16 @@ public class Entity {
 
     //Player Collision Box
     public Rectangle solidArea;
+    public Rectangle attackArea = new Rectangle(0,0,0,0);
     public int solidAreaX, solidAreaY;
     public boolean collisionOn = false;
 
     //Character Status
     public int maxLife;
     public int life;
+    public boolean alive;
+    public boolean attacking;
+    public int attackPower;
 
 
     public void draw(Graphics2D g2) {
@@ -43,4 +47,8 @@ public class Entity {
 
         return thisBox.intersects(otherBox);
     }
+
+
+    protected abstract void takeDamage(int attackPower);
+    protected abstract void die();
 }
