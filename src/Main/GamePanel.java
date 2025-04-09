@@ -115,6 +115,7 @@ public class GamePanel extends JPanel {
                 orc.update();
             }
         }
+        BOD.update();
     }
 
     public int getTileSize() {

@@ -97,8 +97,8 @@ public class Player extends Entity {
 
     public void setDefaultValues() {
         // Default player Spawn point
-        worldX = gamePanel.getTileSize() * 151 - (gamePanel.getTileSize() / 2); //430
-        worldY = gamePanel.getTileSize() * 123 - (gamePanel.getTileSize() / 2); //730
+        worldX = gamePanel.getTileSize() * 173 - (gamePanel.getTileSize() / 2); //430
+        worldY = gamePanel.getTileSize() * 116 - (gamePanel.getTileSize() / 2); //730
 
         speed = 4;
         direction = "idle";
@@ -302,7 +302,11 @@ public class Player extends Entity {
                         if(life + lifeSteal < maxLife) {
                             life += lifeSteal;
                         }
-
+                    }else if(monster instanceof BringerOfDeath) {
+                        ((BringerOfDeath) monster).takeDamage(attackPower);
+                        if(life + lifeSteal < maxLife) {
+                            life += lifeSteal;
+                        }
                     }
                     // else if (monster instanceof Slime) { ... } // Handle other monster types
 
