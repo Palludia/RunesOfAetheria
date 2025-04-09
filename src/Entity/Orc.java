@@ -119,7 +119,7 @@ public class Orc extends Entity {
      */
     public void update() {
         // Ignore updates if game not playing or Orc is dead
-        if (gp.gameState != gp.PLAY_STATE || !alive) {
+        if (gp.gameState != gp.NEWGAME_STATE && gp.gameState != gp.LOADGAME_STATE || !alive) {
             return;
         }
 

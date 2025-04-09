@@ -61,6 +61,10 @@ public class Player extends Entity {
     // --- Font ---
     public Font playerHpFont;
 
+
+    // --- Lifesteal ---
+    public double lifeSteal;
+
     public Player(GamePanel gamePanel, KeyHandler keyH, MouseHandler mouseH) {
         this.gamePanel = gamePanel;
         this.keyH = keyH;
@@ -78,8 +82,7 @@ public class Player extends Entity {
         // Define attack area (size only, position is set dynamically)
         // Dimensions relative to player's solidArea/facing direction
         attackArea = new Rectangle(0, 0, 40, 40); // Increased size slightly
-        attackPower = 10;
-        attacking = false;
+
 
         // Init aggro circle
         aggroRange = new Ellipse2D.Double(); // Position set in updateAggroCircle
@@ -104,7 +107,8 @@ public class Player extends Entity {
         // Player Status
         maxLife = 500; // e.g., 5 hearts
         life = maxLife; // Start with full life
-        attackPower = 5; // Example attack power
+        attackPower = 10;
+        lifeSteal = attackPower * 0.5;
 
         attacking = false;
         collisionOn = false;
@@ -295,6 +299,10 @@ public class Player extends Entity {
 //                     Apply damage to the monster (assuming a takeDamage method exists)
                     if (monster instanceof Orc) { // Example: Cast if needed for specific methods
                         ((Orc) monster).takeDamage(attackPower);
+                        if(life + lifeSteal < maxLife) {
+                            life += lifeSteal;
+                        }
+
                     }
                     // else if (monster instanceof Slime) { ... } // Handle other monster types
 
@@ -502,27 +510,27 @@ public class Player extends Entity {
     }
 
     // --- UI Drawing Methods (Hearts, HP) ---
-    public void drawPlayerHeart(Graphics2D g2) {
-        // Keep your existing heart drawing logic here
-        int x = gamePanel.getTileSize() / 100;
-        int y = gamePanel.getTileSize() / 100;
-        int heartSize = gamePanel.getTileSize(); // Assuming heart images are tile sized
-
-        // Draw blank hearts up to maxLife
-        for (int i = 0; i < maxLife / 100; i++) {
-            g2.drawImage(heart_blank, x + (i * heartSize), y, heartSize, heartSize, null);
-        }
-        // Draw filled hearts based on current life
-        int fullHearts = life / 100;
-        int halfHearts = life % 100;
-        for (int i = 0; i < fullHearts; i++) {
-            g2.drawImage(heart_full, x + (i * heartSize), y, heartSize, heartSize, null);
-        }
-        // Draw half heart if needed
-        if (halfHearts > 0) {
-            g2.drawImage(heart_half, x + (fullHearts * heartSize), y, heartSize, heartSize, null);
-        }
-    }
+//    public void drawPlayerHeart(Graphics2D g2) {
+//        // Keep your existing heart drawing logic here
+//        int x = gamePanel.getTileSize() / 100;
+//        int y = gamePanel.getTileSize() / 100;
+//        int heartSize = gamePanel.getTileSize(); // Assuming heart images are tile sized
+//
+//        // Draw blank hearts up to maxLife
+//        for (int i = 0; i < maxLife / 100; i++) {
+//            g2.drawImage(heart_blank, x + (i * heartSize), y, heartSize, heartSize, null);
+//        }
+//        // Draw filled hearts based on current life
+//        int fullHearts = life / 100;
+//        int halfHearts = life % 100;
+//        for (int i = 0; i < fullHearts; i++) {
+//            g2.drawImage(heart_full, x + (i * heartSize), y, heartSize, heartSize, null);
+//        }
+//        // Draw half heart if needed
+//        if (halfHearts > 0) {
+//            g2.drawImage(heart_half, x + (fullHearts * heartSize), y, heartSize, heartSize, null);
+//        }
+//    }
 
     private void drawHPBar(Graphics2D g2, int screenX, int screenY) {
         // Don't draw HP bar if Orc has full health (optional clutter reduction)
@@ -601,10 +609,10 @@ public class Player extends Entity {
         }
 
         g2.setColor(Color.WHITE);
-        String hpText = String.format("HP %d / %d", life, maxLife);
+        String hpText = String.format("HP %.2f / %.2f", life, maxLife);
         // Position relative to screen, perhaps near hearts or corner
         int textX = gamePanel.getTileSize() / 2; // Align with hearts start
-        int textY = gamePanel.getTileSize() * 2; // Position below hearts (adjust as needed)
+        int textY = gamePanel.getTileSize(); // Position below hearts (adjust as needed)
         // Add a shadow for readability
         g2.setColor(Color.BLACK);
         g2.drawString(hpText, textX+1, textY+1);

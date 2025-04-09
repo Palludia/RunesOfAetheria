@@ -2,13 +2,8 @@ package PlayerKeyHandler;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.security.Key;
-import java.util.HashSet;
-import java.util.Set;
 
-import Main.Game;
 import Main.GamePanel;
-import static Utilz.Constants.Directions.*;
 
 public class KeyHandler implements KeyListener {
     public boolean shiftPressed = false, upPressed, downPressed, leftPressed, rightPressed;
@@ -47,14 +42,21 @@ public class KeyHandler implements KeyListener {
             if(code == KeyEvent.VK_ENTER) {
                 if(gp.commandNum == 0) {
                     gp.sound.stopClip(0);
-                    gp.setGameState(gp.PLAY_STATE);
-                }else if(gp.commandNum == 2) {
+                    gp.resetAndGoToState(1);
+                    gp.setMoving(true);
+                    gp.newGameSelected = true;
+                }else if(gp.commandNum == 1 && gp.newGameSelected) {
+                    gp.sound.stopClip(0);
+                    gp.setGameState(gp.LOADGAME_STATE);
+                    gp.setMoving(true);
+                }
+                else if(gp.commandNum == 2) {
                     System.exit(0);
                 }
             }
         }
 
-        else if (gp.gameState == gp.PLAY_STATE && gp.player.alive) {
+        else if (gp.gameState == gp.NEWGAME_STATE && gp.player.alive || gp.gameState == gp.LOADGAME_STATE) {
             // Movement keys
             if (code == KeyEvent.VK_W) { upPressed = true; }
             if (code == KeyEvent.VK_S) { downPressed = true; }
@@ -70,6 +72,11 @@ public class KeyHandler implements KeyListener {
                 gp.setMoving(false);
                 gp.setGameState(gp.PAUSE_STATE);
             }
+
+            if(code == KeyEvent.VK_ESCAPE) {
+                gp.setMoving(false);
+                gp.setGameState(gp.ESCAPE_STATE);
+            }
             // Debug Key Example
             if (code == KeyEvent.VK_T) {
                 gp.showDebugInfo = !gp.showDebugInfo; // Toggle debug info
@@ -79,7 +86,7 @@ public class KeyHandler implements KeyListener {
         else if (gp.gameState == gp.PAUSE_STATE) {
             // Unpause Key
             if (code == KeyEvent.VK_P) {
-                gp.setGameState(gp.PLAY_STATE); // Switch back to Play State
+                gp.setGameState(gp.LOADGAME_STATE); // Switch back to Play State
                 gp.sound.resumeClip(1);
                 gp.setMoving(true);
             }
@@ -89,7 +96,20 @@ public class KeyHandler implements KeyListener {
         else if(gp.gameState == gp.GAMEOVER_STATE) {
             if(code == KeyEvent.VK_ENTER) {
                 gp.playMusic(0);
-                gp.resetGame();
+                gp.resetAndGoToState(0);
+                gp.newGameSelected = false;
+            }
+        }
+
+        else if(gp.gameState == gp.ESCAPE_STATE) {
+            if(code == KeyEvent.VK_Y) {
+                gp.sound.stopAll();
+                gp.setGameState(gp.TITLE_STATE);
+                gp.sound.loopClip(0);
+            }else if(code == KeyEvent.VK_N) {
+                gp.setGameState(gp.LOADGAME_STATE);
+                gp.sound.resumeClip(1);
+                gp.setMoving(true);
             }
         }
 
