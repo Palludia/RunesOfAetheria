@@ -2,6 +2,7 @@ package Main;
 
 import Entity.Entity;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class CollisionChecker {
     GamePanel gp;
@@ -50,41 +51,44 @@ public class CollisionChecker {
     }
 
     public void checkForMonster(Entity entity) {
+        ArrayList<Entity> entityList = new ArrayList<>();
+        entityList.add(gp.BOD);
+        entityList.addAll(gp.orcs);
 
-        for(int i = 0; i < gp.orcs.size(); i++) {
-            if(gp.orcs.get(i) != null) {
+        for(int i = 0; i < entityList.size(); i++) {
+            if(entityList.get(i) != null) {
                 entity.solidArea.x = entity.worldX + entity.solidArea.x;
                 entity.solidArea.y = entity.worldY + entity.solidArea.y;
 
-                gp.orcs.get(i).solidArea.x = gp.orcs.get(i).worldX + gp.orcs.get(i).solidArea.x;
-                gp.orcs.get(i).solidArea.y = gp.orcs.get(i).worldY + gp.orcs.get(i).solidArea.y;
+                entityList.get(i).solidArea.x = entityList.get(i).worldX + entityList.get(i).solidArea.x;
+                entityList.get(i).solidArea.y = entityList.get(i).worldY + entityList.get(i).solidArea.y;
 
                 switch(entity.direction) {
                     case "up":
                         entity.solidArea.y -= entity.speed;
-                        if(entity.solidArea.intersects(gp.orcs.get(i).solidArea)) {
-                            if(gp.orcs.get(i).collision) {
+                        if(entity.solidArea.intersects(entityList.get(i).solidArea)) {
+                            if(entityList.get(i).getCollision()) {
                                 entity.collisionOn = true;
                             }
                         }break;
                     case "down":
                         entity.solidArea.y += entity.speed;
-                        if(entity.solidArea.intersects(gp.orcs.get(i).solidArea)) {
-                            if(gp.orcs.get(i).collision) {
+                        if(entity.solidArea.intersects(entityList.get(i).solidArea)) {
+                            if(entityList.get(i).getCollision()) {
                                 entity.collisionOn = true;
                             }
                         }break;
                     case "left":
                         entity.solidArea.x -= entity.speed;
-                        if(entity.solidArea.intersects(gp.orcs.get(i).solidArea)) {
-                            if(gp.orcs.get(i).collision) {
+                        if(entity.solidArea.intersects(entityList.get(i).solidArea)) {
+                            if(entityList.get(i).getCollision()) {
                                 entity.collisionOn = true;
                             }
                         }break;
                     case "right":
                         entity.solidArea.x += entity.speed;
-                        if(entity.solidArea.intersects(gp.orcs.get(i).solidArea)) {
-                            if(gp.orcs.get(i).collision) {
+                        if(entity.solidArea.intersects(entityList.get(i).solidArea)) {
+                            if(entityList.get(i).getCollision()) {
                                 entity.collisionOn = true;
                             }
                         }break;
@@ -92,43 +96,50 @@ public class CollisionChecker {
                 entity.solidArea.x = entity.solidAreaX;
                 entity.solidArea.y = entity.solidAreaY;
 
-                gp.orcs.get(i).solidArea.x = gp.orcs.get(i).solidAreaX;
-                gp.orcs.get(i).solidArea.y = gp.orcs.get(i).solidAreaY;
+                entityList.get(i).solidArea.x = entityList.get(i).solidAreaX;
+                entityList.get(i).solidArea.y = entityList.get(i).solidAreaY;
             }
         }
     }
 
     public void checkForPlayer(Entity entity) {
+        ArrayList<Entity> entityList = new ArrayList<>();
+        entityList.add(gp.BOD);
+        entityList.addAll(gp.orcs);
 
-        for(int i = 0; i < gp.orcs.size(); i++) {
-            if(gp.orcs.get(i) != null) {
+        for (Entity value : entityList) {
+            if (value != null) {
                 entity.solidArea.x = entity.worldX + entity.solidArea.x;
                 entity.solidArea.y = entity.worldY + entity.solidArea.y;
 
                 gp.player.solidArea.x = gp.player.worldX + gp.player.solidArea.x;
                 gp.player.solidArea.y = gp.player.worldY + gp.player.solidArea.y;
 
-                switch(entity.direction) {
+                switch (entity.direction) {
                     case "up":
                         entity.solidArea.y -= entity.speed;
-                        if(entity.solidArea.intersects(gp.player.solidArea)) {
+                        if (entity.solidArea.intersects(gp.player.solidArea)) {
                             entity.collisionOn = true;
-                        }break;
+                        }
+                        break;
                     case "down":
                         entity.solidArea.y += entity.speed;
-                        if(entity.solidArea.intersects(gp.player.solidArea)) {
+                        if (entity.solidArea.intersects(gp.player.solidArea)) {
                             entity.collisionOn = true;
-                        }break;
+                        }
+                        break;
                     case "left":
                         entity.solidArea.x -= entity.speed;
-                        if(entity.solidArea.intersects(gp.player.solidArea)) {
+                        if (entity.solidArea.intersects(gp.player.solidArea)) {
                             entity.collisionOn = true;
-                        }break;
+                        }
+                        break;
                     case "right":
                         entity.solidArea.x += entity.speed;
-                        if(entity.solidArea.intersects(gp.player.solidArea)) {
-                                entity.collisionOn = true;
-                        }break;
+                        if (entity.solidArea.intersects(gp.player.solidArea)) {
+                            entity.collisionOn = true;
+                        }
+                        break;
                 }
                 entity.solidArea.x = entity.solidAreaX;
                 entity.solidArea.y = entity.solidAreaY;

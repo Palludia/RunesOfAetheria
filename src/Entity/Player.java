@@ -279,8 +279,12 @@ public class Player extends Entity {
      * Checks if the current attackArea intersects with any enemies.
      */
     private void performAttackCheck() {
+        ArrayList<Entity> entityList = new ArrayList<>();
+        entityList.add(gamePanel.BOD);
+        entityList.addAll(gamePanel.orcs);
+
         // Iterate through monsters (use the actual list from GamePanel)
-        for (Entity monster : gamePanel.orcs) { // Assuming gamePanel.orcs is the list of enemies (use Entity type)
+        for (Entity monster : entityList) { // Assuming gamePanel.orcs is the list of enemies (use Entity type)
             if (monster != null && monster != this && !hitEntitiesThisSwing.contains(monster)) { // Check if monster exists, isn't self, and hasn't been hit this swing
 
                 // Get monster's world bounds for collision check
@@ -362,14 +366,15 @@ public class Player extends Entity {
      * Sets the aggro status of nearby monsters based on the aggroRange.
      */
     private void checkAggro(){
-        for(Entity m : gamePanel.orcs){ // Use Entity type for broader compatibility
-            if (m != null && m instanceof Orc) { // Check type if calling type-specific methods like setAggro
-                Orc orc = (Orc) m; // Cast to Orc
-                // Calculate monster center point
-                double monsterCenterX = orc.worldX + orc.solidArea.x + orc.solidArea.width / 2.0;
-                double monsterCenterY = orc.worldY + orc.solidArea.y + orc.solidArea.height / 2.0;
-                // Set aggro based on whether the monster's center is inside the player's aggro range
-                orc.setAggro(aggroRange.contains(monsterCenterX, monsterCenterY));
+        ArrayList<Entity> entityList = new ArrayList<>(gamePanel.orcs);
+        entityList.add(gamePanel.BOD);
+
+        for(Entity m : entityList){ // Use Entity type for broader compatibility
+            if (m != null) {
+                double centerX = m.worldX + m.solidArea.x + m.solidArea.width / 2.0;
+                double centerY = m.worldY + m.solidArea.y + m.solidArea.height / 2.0;
+                boolean inAggroRange = aggroRange.contains(centerX, centerY);
+                m.setAggro(inAggroRange);
             }
         }
     }
@@ -483,6 +488,16 @@ public class Player extends Entity {
         }
         alive = false;
         collisionOn = false;
+    }
+
+    @Override
+    public boolean getCollision() {
+        return false;
+    }
+
+    @Override
+    public void setAggro(boolean state) {
+
     }
 
     /** Draws debug rectangles and circles */

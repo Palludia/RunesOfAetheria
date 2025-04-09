@@ -22,8 +22,8 @@ public class BringerOfDeath extends Entity{
     public BufferedImage[] attackLeft = new BufferedImage[10];
     public BufferedImage[] attackRight = new BufferedImage[10];
 
-    private int characterWidth = 280 * 4;  // Drawing width
-    private int characterHeight = 85 * 4; // Drawing height
+    private int characterWidth = 280 * 3;  // Drawing width
+    private int characterHeight = 85 * 3; // Drawing height
     public int spriteIndex = 0;        // Current frame index for walk/idle
     public int spriteCounter = 0;      // Timer for walk/idle animation speed
     private int attackSpriteIndex = 0;    // Current frame index for attack
@@ -32,6 +32,7 @@ public class BringerOfDeath extends Entity{
     private static final int WALK_ANIMATION_DELAY = 8; // Frames between walk/idle frame changes
     private static final int ATTACK_ANIMATION_DELAY = 6; // Frames between attack frame changes
     private Font BODHpFont;            // Pre-loaded font for HP display
+
 
     // --- State & AI ---
     public boolean collision = true; // Causes movement collision?
@@ -57,7 +58,7 @@ public class BringerOfDeath extends Entity{
         this.gp = gp;
 
         // Define the collision area relative to the entity's top-left corner (0,0)
-        solidArea = new Rectangle(35, 65, 20, 10); // Adjust x, y, width, height
+        solidArea = new Rectangle(characterWidth/3 +15, characterHeight -20, 65, 30); // Adjust x, y, width, height
         solidAreaX = solidArea.x; // Store the default relative X offset
         solidAreaY = solidArea.y; // Store the default relative Y offset
 
@@ -88,7 +89,7 @@ public class BringerOfDeath extends Entity{
         // Reset timers and animation state
         actionCooldown = 0;
         attackCooldown = 0;
-        attackRange = gp.getTileSize();
+        attackRange = gp.getTileSize() * characterWidth /2;
         spriteIndex = 0;
         spriteCounter = 0;
         attackSpriteIndex = 0;
@@ -149,9 +150,7 @@ public class BringerOfDeath extends Entity{
         // Check if the intended direction (from AI) is blocked by tiles or player.
         collisionOn = false; // Reset collision flag before checking
         gp.check.checkCollision(this);   // Check against solid tiles
-        if (!collisionOn) { // Optimization: only check player if tiles are clear
-            gp.check.checkForPlayer(this); // Check against player (for movement blocking)
-        }
+        gp.check.checkForPlayer(this);
 
         // --- 5. Movement & Improved Collision Response ---
         // Execute movement only if the path was clear initially.
@@ -184,7 +183,7 @@ public class BringerOfDeath extends Entity{
 
         // Determine attack direction - Face the player at the moment attack starts
         int dx = gp.player.worldX - worldX;
-        attackDirection = (dx > 0) ? "right" : "left";
+        attackDirection = (dx > 0) ? "left" : "right";
 
         // Make the entity visually face the direction they are attacking
         direction = attackDirection;
@@ -246,7 +245,7 @@ public class BringerOfDeath extends Entity{
             // Center vertically, left of solidArea
             attackOffsetX = solidArea.x - attackArea.width;
             attackOffsetY = solidArea.y + (solidArea.height / 2) - (attackArea.height / 2);
-        } else { // right
+        } else if("right".equals(attackDirection)){ // right
             // Center vertically, right of solidArea
             attackOffsetX = solidArea.x + solidArea.width;
             attackOffsetY = solidArea.y + (solidArea.height / 2) - (attackArea.height / 2);
@@ -401,6 +400,8 @@ public class BringerOfDeath extends Entity{
             }
 
             // --- Drawing HP Bar ---
+            g2.setColor(Color.RED);
+            g2.drawRect(screenX + solidAreaX, screenY + solidAreaY, solidArea.width , solidArea.height );
             drawHPBar(g2, screenX, screenY);
         }
     }
@@ -615,4 +616,7 @@ public class BringerOfDeath extends Entity{
     public void reset() {
         setDefaultValues();
     }
+
+    @Override
+    public boolean getCollision(){return collision;}
 }

@@ -180,9 +180,7 @@ public class Orc extends Entity {
         // Check if the intended direction (from AI) is blocked by tiles or player.
         collisionOn = false; // Reset collision flag before checking
         gp.check.checkCollision(this);   // Check against solid tiles
-        if (!collisionOn) { // Optimization: only check player if tiles are clear
-            gp.check.checkForPlayer(this); // Check against player (for movement blocking)
-        }
+        gp.check.checkForPlayer(this);
 
         // --- 5. Movement & Improved Collision Response ---
         // Execute movement only if the path was clear initially.
@@ -833,6 +831,7 @@ public class Orc extends Entity {
      *
      * @param aggro true to make the Orc aggressive, false otherwise.
      */
+    @Override
     public void setAggro(boolean aggro) {
         if (this.aggro != aggro) { // Only print/change if state actually changes
             // System.out.println("Orc aggro set to: " + aggro); // Debug
@@ -915,4 +914,7 @@ public class Orc extends Entity {
     public void reset() {
         setDefaultValues();
     }
+
+    @Override
+    public boolean getCollision(){return collision;};
 } // End of Orc class

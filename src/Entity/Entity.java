@@ -51,4 +51,6 @@ public abstract class Entity {
 
     protected abstract void takeDamage(int attackPower);
     protected abstract void die();
+    public abstract boolean getCollision();
+    public abstract void setAggro(boolean state);
 }
