@@ -32,15 +32,19 @@ public class GamePanel extends JPanel {
     public int maxWorldRow;
 
     public final int TITLE_STATE = 0;
-    public final int PLAY_STATE = 1;
+    public final int NEWGAME_STATE = 1;
     public final int PAUSE_STATE = 2;
     public final int GAMEOVER_STATE = 3;
+    public final int ESCAPE_STATE = 4;
+    public final int LOADGAME_STATE = 5;
+
     public int gameState;
     public int commandNum = 0;
     public int previousState;
 
 
     public boolean isMoving;
+    public boolean newGameSelected = false;
 
     public ArrayList<Orc> orcs = new ArrayList<>();
 
@@ -57,7 +61,7 @@ public class GamePanel extends JPanel {
         this.maxWorldCol = tileManager.getMapWidth();
         this.maxWorldRow = tileManager.getMapHeight();
         setGameState(TITLE_STATE);
-        spawnOrcs(1);
+        spawnOrcs(10);
         setMoving(true);
         previousState = -1;
     }
@@ -75,7 +79,7 @@ public class GamePanel extends JPanel {
         if (gameState == TITLE_STATE) {
             menu.drawTitleScreen(g2);
         } else {
-            menu.drawPlayScreen(g2); // Assuming this method draws tiles, player, NPCs
+            menu.drawPlayScreen(g2);
             if(!player.alive && gameState != GAMEOVER_STATE) {
                 setGameState(GAMEOVER_STATE);
             }
@@ -85,13 +89,16 @@ public class GamePanel extends JPanel {
             if (gameState == PAUSE_STATE) {
                 menu.drawPauseScreen(g2); // We'll add this method to the Menu class
             }
+            if(gameState == ESCAPE_STATE) {
+                menu.drawEscapeScreen(g2);
+            }
         }
         g2.dispose();
     }
 
     public void updatePos() {
         player.update();
-        if (gameState == PAUSE_STATE) {
+        if (gameState == PAUSE_STATE || gameState == ESCAPE_STATE) {
             return;
         }
         for (Orc orc : orcs) {
@@ -116,7 +123,7 @@ public class GamePanel extends JPanel {
                 sound.loopClip(0);
                 break;
 
-            case PLAY_STATE:
+            case NEWGAME_STATE:
                 // Stop playing any previous music before switching
                 sound.stopClip(1);
                 // Loop the play state music (clip at index 1)
@@ -131,6 +138,15 @@ public class GamePanel extends JPanel {
             case GAMEOVER_STATE:
                 // Stop all playing sounds for game over
                 sound.stopAll();
+                break;
+            case ESCAPE_STATE:
+                sound.pauseClip(1);
+                break;
+            case LOADGAME_STATE:
+                // Stop playing any previous music before switching
+                sound.stopClip(1);
+                // Loop the play state music (clip at index 1)
+                sound.loopClip(1);
                 break;
         }
     }
@@ -147,28 +163,31 @@ public class GamePanel extends JPanel {
     public void resetGame() {
         System.out.println("Resetting game...");
 
-        // Full audio cleanup
         sound.stopAll();
-
-        // Reset game state
         player.setDefaultValues();
+
         for (Orc orc : orcs) {
             orc.reset();
         }
 
-        // Delay to ensure audio cleanup (if necessary)
         try {
             Thread.sleep(150);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-
-        // Explicit state transition: back to title state
-        setGameState(TITLE_STATE);
-
-        // Start fresh title music
-        sound.loopClip(0);
     }
+
+    public void resetAndGoToState(int targetState) {
+        resetGame();
+        setGameState(targetState);
+        if(targetState == TITLE_STATE) {
+            sound.loopClip(0);
+        }else if(targetState == NEWGAME_STATE || targetState == LOADGAME_STATE) {
+            sound.loopClip(1);
+        }
+
+    }
+
 
 
     public void setMoving(boolean moving) {
@@ -186,7 +205,7 @@ public class GamePanel extends JPanel {
             case TITLE_STATE:
                 // If you want title music, you can add additional title-specific behavior here.
                 break;
-            case PLAY_STATE:
+            case NEWGAME_STATE:
                 // Additional behavior if needed for play state.
                 break;
             case PAUSE_STATE:
@@ -195,7 +214,7 @@ public class GamePanel extends JPanel {
             case GAMEOVER_STATE:
                 // Additional behavior for game over can be added here.
                 break;
-        }
-    }
+        } // 🔍 You are missing this closing brace!
+    } // ✅ Close method here
 
 }

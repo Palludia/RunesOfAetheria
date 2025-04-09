@@ -12,7 +12,7 @@ import java.util.Comparator;
 public class Menu {
     GamePanel gp;
     private Image backgroundImage;
-    Font arial_40, arial_80_bold;
+    Font arial_40, arial_80_bold, arial_40_bold, arial_30;
 
     public Menu(GamePanel gp) {
         this.gp = gp;
@@ -25,6 +25,8 @@ public class Menu {
         }
         arial_40 = new Font("Arial", Font.PLAIN, 40);
         arial_80_bold = new Font("Arial", Font.BOLD, 80);
+        arial_40_bold = new Font("Arial",Font.BOLD, 40);
+        arial_30 = new Font("Arial",Font.PLAIN, 30);
     }
 
     public void drawTitleScreen(Graphics2D g2) {
@@ -66,7 +68,7 @@ public class Menu {
 
         g2.setColor(Color.WHITE);
 
-        String[] menuItems = { "NEW GAME", "SETTINGS", "QUIT" };
+        String[] menuItems = { "NEW GAME", "LOAD GAME", "QUIT" };
         // Adjusted vertical starting position
         int menuY = (screenHeight * 3 / 4) - 30; // Slightly higher position
         int lineSpacing = 55; // Space between lines
@@ -107,7 +109,7 @@ public class Menu {
             entity.draw(g2);
         }
 
-        gp.player.drawPlayerHeart(g2);
+//        gp.player.drawPlayerHeart(g2);
         gp.player.drawPlayerHP(g2);
     }
 
@@ -164,9 +166,31 @@ public class Menu {
         g2.drawString(text, x, y);
 
         g2.setFont(arial_40);
-        String resumeText = "Press ENTER to Restart";
+        String resumeText = "Press ENTER to go back to main menu";
         x = getXforCenteredText(resumeText, g2);
         y += gp.tileSize * 2; // Position below "PAUSED"
+        g2.drawString(resumeText, x, y);
+
+    }
+
+    public void drawEscapeScreen(Graphics2D g2) {
+        g2.setColor(new Color(0, 0, 0, 150)); // Black with ~60% opacity (alpha 150/255)
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        // 2. Draw the "PAUSED" text
+        g2.setFont(arial_40_bold);
+        g2.setColor(Color.WHITE);
+
+        String text = "Do you want to return to the main menu?";
+        int x = getXforCenteredText(text, g2);
+        int y = gp.screenHeight / 2;
+
+        g2.drawString(text, x, y);
+
+        g2.setFont(arial_30);
+        String resumeText = "Press Y to confirm, N to resume";
+        x = getXforCenteredText(resumeText, g2);
+        y += gp.tileSize * 2;
         g2.drawString(resumeText, x, y);
 
     }

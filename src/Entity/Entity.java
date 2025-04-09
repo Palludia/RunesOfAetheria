@@ -19,8 +19,8 @@ public abstract class Entity {
     public boolean collisionOn = false;
 
     //Character Status
-    public int maxLife;
-    public int life;
+    public double maxLife;
+    public double life;
     public boolean alive;
     public boolean attacking;
     public int attackPower;
