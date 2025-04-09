@@ -1,8 +1,6 @@
 package Main;
 
 import Entity.Entity;
-import Entity.Orc;
-import Objects.OBJ_HEART;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Random;
 
 public class Menu {
     GamePanel gp;
@@ -150,5 +147,27 @@ public class Menu {
         FontMetrics fm = g2.getFontMetrics();
         int length = fm.stringWidth(text);
         return gp.screenWidth / 2 - length / 2;
+    }
+
+    public void drawGameOverScreen(Graphics2D g2) {
+        g2.setColor(new Color(0, 0, 0, 150)); // Black with ~60% opacity (alpha 150/255)
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        // 2. Draw the "PAUSED" text
+        g2.setFont(arial_80_bold); // Use a large font
+        g2.setColor(Color.WHITE); // White or a contrasting color
+
+        String text = "YOU DIED";
+        int x = getXforCenteredText(text, g2);
+        int y = gp.screenHeight / 2; // Center vertically
+
+        g2.drawString(text, x, y);
+
+        g2.setFont(arial_40);
+        String resumeText = "Press ENTER to Restart";
+        x = getXforCenteredText(resumeText, g2);
+        y += gp.tileSize * 2; // Position below "PAUSED"
+        g2.drawString(resumeText, x, y);
+
     }
 }

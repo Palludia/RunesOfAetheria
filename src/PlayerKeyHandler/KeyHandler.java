@@ -11,8 +11,8 @@ import Main.GamePanel;
 import static Utilz.Constants.Directions.*;
 
 public class KeyHandler implements KeyListener {
-    public boolean shiftPressed, upPressed, downPressed, leftPressed, rightPressed;
-    public boolean isMoving = true;
+    public boolean shiftPressed = false, upPressed, downPressed, leftPressed, rightPressed;
+    public boolean pPressed;
     GamePanel gp;
 
     public KeyHandler(GamePanel gp) {
@@ -46,23 +46,29 @@ public class KeyHandler implements KeyListener {
             }
             if(code == KeyEvent.VK_ENTER) {
                 if(gp.commandNum == 0) {
-                    gp.setGameState(1); // PLAY STATE
+                    gp.sound.stopClip(0);
+                    gp.setGameState(gp.PLAY_STATE);
                 }else if(gp.commandNum == 2) {
                     System.exit(0);
                 }
             }
         }
 
-        else if (gp.gameState == gp.PLAY_STATE) {
+        else if (gp.gameState == gp.PLAY_STATE && gp.player.alive) {
             // Movement keys
             if (code == KeyEvent.VK_W) { upPressed = true; }
             if (code == KeyEvent.VK_S) { downPressed = true; }
             if (code == KeyEvent.VK_A) { leftPressed = true; }
             if (code == KeyEvent.VK_D) { rightPressed = true; }
+            if (code == KeyEvent.VK_SHIFT && !shiftPressed) {
+                gp.player.speed *= 1.5;
+                shiftPressed = true;
+            }
 
             // Pause Key
             if (code == KeyEvent.VK_P) {
-                gp.setGameState(gp.PAUSE_STATE); // Switch to Pause State
+                gp.setMoving(false);
+                gp.setGameState(gp.PAUSE_STATE);
             }
             // Debug Key Example
             if (code == KeyEvent.VK_T) {
@@ -74,8 +80,17 @@ public class KeyHandler implements KeyListener {
             // Unpause Key
             if (code == KeyEvent.VK_P) {
                 gp.setGameState(gp.PLAY_STATE); // Switch back to Play State
+                gp.sound.resumeClip(1);
+                gp.setMoving(true);
             }
             // Add other pause menu controls here if needed (e.g., Enter to select Quit)
+        }
+
+        else if(gp.gameState == gp.GAMEOVER_STATE) {
+            if(code == KeyEvent.VK_ENTER) {
+                gp.playMusic(0);
+                gp.resetGame();
+            }
         }
 
 
@@ -86,14 +101,14 @@ public class KeyHandler implements KeyListener {
 
         int code = e.getExtendedKeyCode();
 
-        switch(code) {
-            case KeyEvent.VK_W -> upPressed = false;
-            case KeyEvent.VK_S -> downPressed = false;
-            case KeyEvent.VK_A -> leftPressed = false;
-            case KeyEvent.VK_D -> rightPressed = false;
-            case KeyEvent.VK_SHIFT -> shiftPressed = false;
+        if (code == KeyEvent.VK_W) { upPressed = false; }
+        if (code == KeyEvent.VK_S) { downPressed = false; }
+        if (code == KeyEvent.VK_A) { leftPressed = false; }
+        if (code == KeyEvent.VK_D) { rightPressed = false; }
+        if (code == KeyEvent.VK_SHIFT) {
+            gp.player.speed = 4;
+            shiftPressed = false;
         }
 
-        isMoving = false;
     }
 }
