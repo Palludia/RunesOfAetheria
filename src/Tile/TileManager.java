@@ -28,8 +28,8 @@ public class TileManager {
         this.gamePanel = gamePanel;
         this.tiles = new HashMap<>();
         this.mapLayers = new ArrayList<>();
-        loadTileSet("/maps/Map1.tmj");
-        loadMap("/maps/Map1.tmj");
+        loadTileSet("/maps/World Map 1.tmj");
+        loadMap("/maps/World Map 1.tmj");
     }
 
     public void loadTileSet(String mapPath) {

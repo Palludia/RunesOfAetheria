@@ -35,6 +35,7 @@ public class Orc extends Entity {
     BufferedImage[] attackLeft = new BufferedImage[7];
     BufferedImage[] attackRight = new BufferedImage[7];
 
+
     private int characterWidth = 90;  // Drawing width
     private int characterHeight = 90; // Drawing height
     public int spriteIndex = 0;        // Current frame index for walk/idle
@@ -87,8 +88,8 @@ public class Orc extends Entity {
      */
     public void setDefaultValues() {
         // Set Orc Spawn point (adjust coordinates as needed)
-        worldX = gp.getTileSize() * 401 - (gp.getTileSize() / 2);
-        worldY = gp.getTileSize() * 738 - (gp.getTileSize() / 2);
+        worldX = gp.getTileSize() * 216 - (gp.getTileSize() / 2);
+        worldY = gp.getTileSize() * 172 - (gp.getTileSize() / 2);
 
         speed = 1;           // Orc movement speed
         direction = "down";  // Initial facing direction

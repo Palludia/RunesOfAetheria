@@ -61,7 +61,7 @@ public class GamePanel extends JPanel {
         this.maxWorldCol = tileManager.getMapWidth();
         this.maxWorldRow = tileManager.getMapHeight();
         setGameState(TITLE_STATE);
-        spawnOrcs(10);
+        spawnOrcs(1);
         setMoving(true);
         previousState = -1;
     }
@@ -170,6 +170,7 @@ public class GamePanel extends JPanel {
             orc.reset();
         }
 
+        // Delay to ensure audio cleanup (if necessary)
         try {
             Thread.sleep(150);
         } catch (InterruptedException e) {
